@@ -1,34 +1,27 @@
 package edu.lifo.operators;
 
-import edu.lifo.solution.DefaultPartitionSolution;
 
 import java.util.List;
 
 import org.uma.jmetal.operator.CrossoverOperator;
 
-public class MCLACrossover implements CrossoverOperator<DefaultPartitionSolution> {
+import edu.lifo.solution.ClusteringSolution;
+
+public class MCLACrossover implements CrossoverOperator<ClusteringSolution> {
 
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public List<DefaultPartitionSolution> execute(List<DefaultPartitionSolution> source) {
+	@Override
+	public List<ClusteringSolution> execute(List<ClusteringSolution> source) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        // Assuming only two parents
-        DefaultPartitionSolution partitionSolution1 = source.get(0);
-        DefaultPartitionSolution partitionSolution2 = source.get(1);
+	@Override
+	public int getNumberOfParents() {
+		return 2;
+	}
 
-        return null;
-    }
-
-    @Override
-    public int getNumberOfParents() {
-        return 2;
-    }
-
-    public void
-        applyMetaClusteringAlgorithm(DefaultPartitionSolution partitionSolution1, DefaultPartitionSolution partitionSolution2) {
-
-
-    }
+  
 
 }

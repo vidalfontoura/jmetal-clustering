@@ -4,19 +4,27 @@ package edu.lifo.solution;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pattern {
-
-    private String patternLabel;
+public class Sample {
+	
+	private String patternLabel;
     private List<Double> coordinates;
+    
 
-    public Pattern() {
+    public String getPatternLabel() {
+		return patternLabel;
+	}
+
+	public void setPatternLabel(String patternLabel) {
+		this.patternLabel = patternLabel;
+	}
+
+    public Sample() {
     }
 
-    public Pattern(List<Double> coordinates, String patternLabel) {
+    public Sample(List<Double> coordinates, String patternLabel) {
         setCoordinates(coordinates);
         this.patternLabel = patternLabel;
     }
-
 
 
     public List<Double> getCoordinates() {
@@ -58,7 +66,7 @@ public class Pattern {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Pattern other = (Pattern) obj;
+        Sample other = (Sample) obj;
         if (coordinates == null) {
             if (other.coordinates != null)
                 return false;
@@ -72,9 +80,9 @@ public class Pattern {
         return true;
     }
 
-    public Pattern copy() {
+    public Sample copy() {
 
-        Pattern point = new Pattern();
+        Sample point = new Sample();
         point.coordinates = new ArrayList<Double>(coordinates);
         return point;
     }

@@ -1,20 +1,21 @@
 package edu.lifo.initial.partitions;
 
+import java.util.List;
 
-public class Partition {
+public class ClusterAndSamples {
     
-    private String sampleId;
+    private List<String> samples;
     private String clusterId;
 
-    public Partition(String sampleId, String clusterId) {
+    public ClusterAndSamples(List<String> samples, String clusterId) {
 
         this.clusterId = clusterId;
-        this.sampleId = sampleId;
+        this.samples = samples;
     }
 
-    public String getSampleId() {
+    public List<String> getSamples() {
 
-        return sampleId;
+        return samples;
     }
 
     public String getClusterId() {
@@ -28,7 +29,7 @@ public class Partition {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
-        result = prime * result + ((sampleId == null) ? 0 : sampleId.hashCode());
+        result = prime * result + ((samples == null) ? 0 : samples.hashCode());
         return result;
     }
 
@@ -41,16 +42,16 @@ public class Partition {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Partition other = (Partition) obj;
+        ClusterAndSamples other = (ClusterAndSamples) obj;
         if (clusterId == null) {
             if (other.clusterId != null)
                 return false;
         } else if (!clusterId.equals(other.clusterId))
             return false;
-        if (sampleId == null) {
-            if (other.sampleId != null)
+        if (samples == null) {
+            if (other.samples != null)
                 return false;
-        } else if (!sampleId.equals(other.sampleId))
+        } else if (!samples.equals(other.samples))
             return false;
         return true;
     }
@@ -58,7 +59,7 @@ public class Partition {
     @Override
     public String toString() {
 
-        return "Partition [sampleId=" + sampleId + ", clusterId=" + clusterId + "]";
+        return "Partition [sampleId=" + samples + ", clusterId=" + clusterId + "]";
     }
 
 }
