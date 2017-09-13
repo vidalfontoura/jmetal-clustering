@@ -56,7 +56,6 @@ public class Patterns {
         nnListPearson = pat.nnListPearson;
 
     }
-    //ds String path to dataset. filePatterns String to filePatterns (Not sure if this is really necessary)
     public Patterns(String ds, String filePatterns) {
         dataset = ds;
         
@@ -107,8 +106,6 @@ public class Patterns {
         } catch (IOException e) {
             e.printStackTrace();
         }
-       	
-       	
         
     	 generateDistanceMatrix();
          generatennList();        
