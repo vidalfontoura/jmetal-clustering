@@ -1,5 +1,6 @@
 package edu.lifo.migrated;
 
+import java.util.List;
 
 public class PatternDescription {
 
@@ -62,6 +63,10 @@ public class PatternDescription {
     public void setValues(double[] values) {
 
         this.values = values;
+    }
+    
+    public void setValues(List<Double> values) {
+    	this.values = values.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
 }

@@ -2,12 +2,12 @@ package edu.lifo.initial.partitions;
 
 import java.util.List;
 
-public class ClusterAndSamples {
+public class Partition {
     
     private List<String> samples;
     private String clusterId;
 
-    public ClusterAndSamples(List<String> samples, String clusterId) {
+    public Partition(List<String> samples, String clusterId) {
 
         this.clusterId = clusterId;
         this.samples = samples;
@@ -42,7 +42,7 @@ public class ClusterAndSamples {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ClusterAndSamples other = (ClusterAndSamples) obj;
+        Partition other = (Partition) obj;
         if (clusterId == null) {
             if (other.clusterId != null)
                 return false;
