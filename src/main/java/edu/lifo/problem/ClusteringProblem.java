@@ -1,22 +1,18 @@
 package edu.lifo.problem;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
 import com.google.common.collect.Lists;
 
-import edu.lifo.dataset.reader.DatasetReader;
-import edu.lifo.initial.partitions.ClusterAndSamples;
 import edu.lifo.solution.Cluster;
-import edu.lifo.solution.ClusteringSolution;
+import edu.lifo.solution.PartitionSolution;
 import edu.lifo.solution.Sample;
 
-public class ClusteringProblem implements Problem<ClusteringSolution>  {
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.math3.ml.distance.EuclideanDistance;
+import org.uma.jmetal.problem.Problem;
+
+public class ClusteringProblem implements Problem<PartitionSolution> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,6 +22,8 @@ public class ClusteringProblem implements Problem<ClusteringSolution>  {
 	private Map<String, List<Double>> dataset;
 	private List<Map<String, List<String>>> initialPopulation;
 	private int initialPopulationIndex;
+
+    EuclideanDistance distance = new EuclideanDistance();
 
 	public ClusteringProblem(int kMin, int kMax, int numberOfObjectives, List<Map<String, List<String>>> initialPopulation, Map<String, List<Double>> dataset) {
 		this.kMin = kMin;
@@ -58,14 +56,37 @@ public class ClusteringProblem implements Problem<ClusteringSolution>  {
 	}
 
 	@Override
-	public void evaluate(ClusteringSolution solution) {
+    public void evaluate(PartitionSolution solution) {
 		
 		
-		solution.getNumberOfVariables();
 		
+
 	}
 	
-	public double calculateConnectivity(ClusteringSolution solution) {
+    public double calculateVarIntraCluster(PartitionSolution solution) {
+
+        int numberOfVariables = solution.getNumberOfVariables();
+
+        double var = -1;
+
+        for (int i = 0; i < numberOfVariables; i++) {
+            Cluster cluster = solution.getVariableValue(i);
+            List<Double> centroid = cluster.getCentroidCoordinates();
+
+            List<Sample> samples = cluster.getSamples();
+            for (int j = 0; j < samples.size(); j++) {
+                Sample sample = samples.get(j);
+                List<Double> coordinates = sample.getCoordinates();
+                var +=
+                    distance.compute(centroid.stream().mapToDouble(Double::doubleValue).toArray(), coordinates.stream()
+                        .mapToDouble(Double::doubleValue).toArray());
+            }
+
+        }
+        return var;
+    }
+
+    public double calculateConnectivity(PartitionSolution solution) {
 		int numberOfVariables = solution.getNumberOfVariables();
 		List<Cluster> clusters = Lists.newArrayList();
 		for (int i=0; i<numberOfVariables; i++) {
@@ -76,8 +97,10 @@ public class ClusteringProblem implements Problem<ClusteringSolution>  {
 		return 0;
 	}
 
+
+
 	@Override
-	public ClusteringSolution createSolution() {
+    public PartitionSolution createSolution() {
 		
 		//TODO: Checar se preciso ter esses objetos cluster ou poderia apenas usar map 
 		Map<String, List<String>> clustersAndSamples = initialPopulation.get(initialPopulationIndex);
@@ -97,9 +120,9 @@ public class ClusteringProblem implements Problem<ClusteringSolution>  {
 			clusters.add(cluster);
 		}
 		
-		ClusteringSolution clusteringSolution = new ClusteringSolution(clusters);
+        PartitionSolution partitionSolution = new PartitionSolution(clusters);
 		initialPopulationIndex++;
-		return clusteringSolution;
+        return partitionSolution;
 		
 	}
 

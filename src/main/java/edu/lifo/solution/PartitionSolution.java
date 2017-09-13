@@ -6,19 +6,19 @@ import java.util.List;
 
 import org.uma.jmetal.solution.Solution;
 
-public class ClusteringSolution implements Solution<Cluster> {
+public class PartitionSolution implements Solution<Cluster> {
 
 	private static final long serialVersionUID = 1L;
 	
 	private double[] objectives;
 	private List<Cluster> clusters;
 	
-	public ClusteringSolution(List<Cluster> clusters) {
+	public PartitionSolution(List<Cluster> clusters) {
 		this.clusters = new ArrayList<>(clusters);
 	}
 	
 	
-	public ClusteringSolution(double[] objectives, List<Cluster> clusters) {
+	public PartitionSolution(double[] objectives, List<Cluster> clusters) {
 		this.clusters = new ArrayList<>(clusters);
 		this.objectives = Arrays.copyOf(objectives, objectives.length);
 	}
@@ -28,7 +28,7 @@ public class ClusteringSolution implements Solution<Cluster> {
 	 * Copy Constructor
 	 * @param copy
 	 */
-	public ClusteringSolution(ClusteringSolution copy) {
+	public PartitionSolution(PartitionSolution copy) {
 		this.objectives = Arrays.copyOf(copy.objectives, copy.objectives.length);
 		this.clusters = new ArrayList<>(copy.clusters);
 	}
@@ -72,7 +72,7 @@ public class ClusteringSolution implements Solution<Cluster> {
 
 	@Override
 	public Solution<Cluster> copy() {
-		return new ClusteringSolution(this);
+		return new PartitionSolution(this);
 	}
 
 	@Override
