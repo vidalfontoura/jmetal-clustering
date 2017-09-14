@@ -2,12 +2,13 @@ package edu.lifo.problem;
 
 import com.google.common.collect.Lists;
 
+import edu.lifo.migrated.PatternDescription;
+import edu.lifo.migrated.Patterns;
 import edu.lifo.solution.Cluster;
 import edu.lifo.solution.PartitionSolution;
 import edu.lifo.solution.Sample;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.uma.jmetal.problem.Problem;
@@ -16,23 +17,23 @@ public class ClusteringProblem implements Problem<PartitionSolution> {
 
 	private static final long serialVersionUID = 1L;
 
+    private Patterns patterns;
 	private int kMin;
 	private int kMax;
 	private int numberOfObjectives;
-	private Map<String, List<Double>> dataset;
-	private List<Map<String, List<String>>> initialPopulation;
-	private int initialPopulationIndex;
+    private double L;
 
     EuclideanDistance distance = new EuclideanDistance();
 
-	public ClusteringProblem(int kMin, int kMax, int numberOfObjectives, List<Map<String, List<String>>> initialPopulation, Map<String, List<Double>> dataset) {
+    public ClusteringProblem(int kMin, int kMax, int numberOfObjectives, String dataSetPath, String filePatternsPath,
+        double L) {
 		this.kMin = kMin;
 		this.kMax = kMax;
 		this.numberOfObjectives = numberOfObjectives;
-		this.dataset = dataset;
-		this.initialPopulation = initialPopulation;
-		initialPopulationIndex = 0;
 		
+        this.patterns = new Patterns(dataSetPath, filePatternsPath);
+        this.L = L;
+
 	}
 
 	@Override
@@ -87,14 +88,27 @@ public class ClusteringProblem implements Problem<PartitionSolution> {
     }
 
     public double calculateConnectivity(PartitionSolution solution) {
-		int numberOfVariables = solution.getNumberOfVariables();
-		List<Cluster> clusters = Lists.newArrayList();
-		for (int i=0; i<numberOfVariables; i++) {
-			clusters.add(solution.getVariableValue(i));
-		}
 		
-		
-		return 0;
+            
+            double conn = 0.0;
+            int nPat = patterns.getPatternsDescription().size();
+            double nn = Math.ceil(nPat * L/100); // number of nearest neighbors is L% of the size of the dataset
+            int nNearestNeighbors = (int) nn;
+           
+            for (PatternDescription patternDescription : patterns.getPatternsDescription()) {
+                double somaNN = 0.0;
+                for (int j = 0; j < nNearestNeighbors; j++){
+                    
+                    
+                    if (solution.clusterOf(patternDescription.getPatternNumber()) !=
+                        solution.clusterOf(Pe.patterns->nnList[(*it1).patternNumber][j])) {
+                        double jj = (j + 1);
+                        somaNN += 1.0 / jj; // j + 1 porque j � 0 para o 1o vizinho... 
+                    }
+                }    
+                conn += somaNN;
+            }    
+           return conn; 
 	}
 
 
@@ -102,27 +116,7 @@ public class ClusteringProblem implements Problem<PartitionSolution> {
 	@Override
     public PartitionSolution createSolution() {
 		
-		//TODO: Checar se preciso ter esses objetos cluster ou poderia apenas usar map 
-		Map<String, List<String>> clustersAndSamples = initialPopulation.get(initialPopulationIndex);
-		List<Cluster> clusters = Lists.newArrayList();
-		for (String clu: clustersAndSamples.keySet()) {
-			
-			List<String> samples = clustersAndSamples.get(clu);
-			List<Sample> amostras = Lists.newArrayList();
-			for (String sampleId: samples) {
-				List<Double> coordinates = dataset.get(sampleId);
-				Sample sample = new Sample(coordinates, sampleId);
-				amostras.add(sample);
-			}
-			Cluster cluster = new Cluster();
-			cluster.setClusterId(clu);
-			cluster.setSamples(amostras);
-			clusters.add(cluster);
-		}
-		
-        PartitionSolution partitionSolution = new PartitionSolution(clusters);
-		initialPopulationIndex++;
-        return partitionSolution;
+        return null;
 		
 	}
 

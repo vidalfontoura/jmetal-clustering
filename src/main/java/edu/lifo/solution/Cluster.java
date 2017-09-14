@@ -9,12 +9,13 @@ public class Cluster {
 
     private List<Double> centroidCoordinates;
     private List<Sample> samples;
-    private String clusterId;
+    private int clusterId;
 
     public Cluster () {
 
     }
-    public Cluster(List<Sample> samples, String clusterId) {
+
+    public Cluster(List<Sample> samples, int clusterId) {
     	this.clusterId = clusterId;
     	this.samples = samples;
         this.updateCentroid();
@@ -40,11 +41,11 @@ public class Cluster {
     }
     
 
-    public String getClusterId() {
+    public int getClusterId() {
 		return clusterId;
 	}
 
-	public void setClusterId(String clusterId) {
+    public void setClusterId(int clusterId) {
 		this.clusterId = clusterId;
 	}
 
@@ -90,35 +91,42 @@ public class Cluster {
         }
         System.out.println ();
     }
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
-		result = prime * result + ((samples == null) ? 0 : samples.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Cluster other = (Cluster) obj;
-		if (clusterId == null) {
-			if (other.clusterId != null)
-				return false;
-		} else if (!clusterId.equals(other.clusterId))
-			return false;
-		if (samples == null) {
-			if (other.samples != null)
-				return false;
-		} else if (!samples.equals(other.samples))
-			return false;
-		return true;
-	}
+
+    @Override
+    public int hashCode() {
+
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((centroidCoordinates == null) ? 0 : centroidCoordinates.hashCode());
+        result = prime * result + clusterId;
+        result = prime * result + ((samples == null) ? 0 : samples.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Cluster other = (Cluster) obj;
+        if (centroidCoordinates == null) {
+            if (other.centroidCoordinates != null)
+                return false;
+        } else if (!centroidCoordinates.equals(other.centroidCoordinates))
+            return false;
+        if (clusterId != other.clusterId)
+            return false;
+        if (samples == null) {
+            if (other.samples != null)
+                return false;
+        } else if (!samples.equals(other.samples))
+            return false;
+        return true;
+    }
 
     public static void main(String[] args) {
 

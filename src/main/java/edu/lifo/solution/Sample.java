@@ -6,9 +6,20 @@ import java.util.List;
 
 public class Sample {
 	
+    private int patternId;
 	private String patternLabel;
     private List<Double> coordinates;
     
+
+    public int getPatternId() {
+
+        return patternId;
+    }
+
+    public void setPatternId(int patternId) {
+
+        this.patternId = patternId;
+    }
 
     public String getPatternLabel() {
 		return patternLabel;
