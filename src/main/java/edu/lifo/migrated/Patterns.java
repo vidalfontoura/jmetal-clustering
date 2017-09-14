@@ -1,5 +1,7 @@
 package edu.lifo.migrated;
 
+import com.google.common.collect.Lists;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,8 +19,6 @@ import java.util.TreeMap;
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.util.Pair;
-
-import com.google.common.collect.Lists;
 
 public class Patterns {
     
@@ -162,7 +161,7 @@ public class Patterns {
 			Collections.sort(distances,new  Comparator<Pair<Integer,Double>>() {
 					@Override
 					public int compare(Pair<Integer, Double> o1, Pair<Integer, Double> o2) {
-						return o1.getSecond().compareTo(o2.getSecond());
+						return o2.getSecond().compareTo(o1.getSecond());
 					}
 			});
 			
@@ -281,7 +280,17 @@ public class Patterns {
 		this.nnListPearson = nnListPearson;
 	}
 
-	public static void main(String[] args) {
+    public String getDataset() {
+
+        return dataset;
+    }
+
+    public void setDataset(String dataset) {
+
+        this.dataset = dataset;
+    }
+
+    public static void main(String[] args) {
 		Patterns pat = new Patterns("/home/lifo/Downloads/iris/iris-dataset.txt", "/home/lifo/Downloads/iris/true partition/iris-truePartition.txt");
 		
 		

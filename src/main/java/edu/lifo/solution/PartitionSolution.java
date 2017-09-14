@@ -24,6 +24,19 @@ public class PartitionSolution implements Solution<Cluster> {
 	}
 	
 	
+    // return the label of the cluster of the pattern "pattern"
+    public int clusterOf(int pattern) {
+
+        for (Cluster it : clusters) {
+            List<Sample> samples = it.getSamples();
+            for (Sample sample : samples) {
+                if (sample.getPatternId() == pattern) {
+                    return it.getClusterId();
+                }
+            }
+	    }    
+	    return -1;
+	}
 	/**
 	 * Copy Constructor
 	 * @param copy
