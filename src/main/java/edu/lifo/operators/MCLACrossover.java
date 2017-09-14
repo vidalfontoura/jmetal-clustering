@@ -10,6 +10,13 @@ import edu.lifo.solution.PartitionSolution;
 public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 
     private static final long serialVersionUID = 1L;
+    
+    
+    private double crossoverProbability;
+    
+	public MCLACrossover(double crossoverProbability) {
+		this.crossoverProbability = crossoverProbability;
+	}
 
 	@Override
 	public List<PartitionSolution> execute(List<PartitionSolution> source) {

@@ -74,7 +74,7 @@ public class DatasetReader {
         return data;
     }
 
-    public static List<Map<String, List<String>>> readInitialPartitions(String initialPartitionsPath) {
+    public static List<Map<Integer, List<String>>> readInitialPartitions(String initialPartitionsPath) {
 
         File dir = new File(initialPartitionsPath);
         if (!dir.isDirectory()) {
@@ -83,15 +83,15 @@ public class DatasetReader {
 
         File[] filesOnDir = dir.listFiles();
         
-        List<Map<String, List<String>>> initialPartitions = Lists.newArrayList();
+        List<Map<Integer, List<String>>> initialPartitions = Lists.newArrayList();
         for (int i = 0; i < filesOnDir.length; i++) {
            
-        	Map<String, List<String>> map = Maps.newHashMap();
+        	Map<Integer, List<String>> map = Maps.newHashMap();
         	try (BufferedReader br = Files.newBufferedReader(Paths.get(filesOnDir[i].getAbsolutePath()))) {
         		String line = null;
         		while ((line = br.readLine()) != null) {
         			String[] split = line.split("\\s");
-                	String clusterId = split[1];
+                	Integer clusterId = Integer.valueOf(split[1]);
                 	String sampleId = split[0];
                 	if (map.get(clusterId) == null) {
                 		List<String> listSamples = Lists.newArrayList();
@@ -136,34 +136,34 @@ public class DatasetReader {
         // String pathToDataSet =
         // "/Users/vfontoura/MOCLE/golub/golub-dataset.txt";
 
-         String pathToDataSet =
-         "/home/lifo/Downloads/iris/iris-dataset.txt";
+//         String pathToDataSet =
+//         "/home/lifo/Downloads/iris/iris-dataset.txt";
          DatasetReader datasetReader = new DatasetReader();
-        
-        
-         Map<String, List<Double>> data = datasetReader.readDataSetAsListPatterns(pathToDataSet);
-         
-
-         for (String sample: data.keySet()) {
-        	 List<Double> list = data.get(sample);
-        	 System.out.println("Sample="+sample+ " "+list.toString());
-         }
+//        
+//        
+//         Map<String, List<Double>> data = datasetReader.readDataSetAsListPatterns(pathToDataSet);
+//         
+//
+//         for (String sample: data.keySet()) {
+//        	 List<Double> list = data.get(sample);
+//        	 System.out.println("Sample="+sample+ " "+list.toString());
+//         }
 
        
     	
-//    	
-//        String initialPartitionsDir = "/home/lifo/Downloads/iris/partitions";
-//        List<Map<String, List<String>>> readInitialPartitions = datasetReader.readInitialPartitions(initialPartitionsDir);
-//
-//        for (int i=0; i<readInitialPartitions.size(); i++) {
-//        	System.out.print("individual="+i+ " ");
-//        	Map<String, List<String>> map = readInitialPartitions.get(i);
-//        	for (String cluster: map.keySet()) {
-//        		System.out.print("Cluster="+cluster+" ");
-//        		List<String> list = map.get(cluster);
-//        		System.out.println(list.toString());
-//        	}
-//        }
+    	
+        String initialPartitionsDir = "/home/lifo/Downloads/iris/partitions";
+        List<Map<Integer, List<String>>> readInitialPartitions = datasetReader.readInitialPartitions(initialPartitionsDir);
+
+        for (int i=0; i<readInitialPartitions.size(); i++) {
+        	System.out.print("individual="+i+ " ");
+        	Map<Integer, List<String>> map = readInitialPartitions.get(i);
+        	for (Integer cluster: map.keySet()) {
+        		System.out.print("Cluster="+cluster+" ");
+        		List<String> list = map.get(cluster);
+        		System.out.println(list.toString());
+        	}
+        }
 
         
 

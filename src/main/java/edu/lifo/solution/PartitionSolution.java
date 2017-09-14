@@ -2,6 +2,8 @@ package edu.lifo.solution;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.uma.jmetal.solution.Solution;
@@ -44,6 +46,31 @@ public class PartitionSolution implements Solution<Cluster> {
 	public PartitionSolution(PartitionSolution copy) {
 		this.objectives = Arrays.copyOf(copy.objectives, copy.objectives.length);
 		this.clusters = new ArrayList<>(copy.clusters);
+	}
+	
+	
+	public void printPartition() {
+		for (Cluster cluster: clusters) {
+			System.out.print("Cluster "+cluster.getClusterId()+":");
+			
+			Collections.sort(cluster.getSamples(), new Comparator<Sample>() {
+
+				@Override
+				public int compare(Sample o1, Sample o2) {
+					if (o1.getPatternId() > o2.getPatternId()) {
+						return 1;
+					}
+					return -1;
+				}
+			
+			});
+			System.out.print(" ");
+			for (Sample sample: cluster.getSamples()) {
+				System.out.print(sample.getPatternId()+ "  ");
+			}
+			System.out.println();
+			
+		}
 	}
 	
 	

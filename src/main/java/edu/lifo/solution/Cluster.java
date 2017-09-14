@@ -1,6 +1,5 @@
 package edu.lifo.solution;
 
-import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,14 +59,14 @@ public class Cluster {
     }
 
     public void updateCentroid() {
-        int dimesion = samples.get(0).getCoordinates().size();
+        int dimesion = samples.get(0).getCoordinates().length;
         double[] sumCoordinates = new double[dimesion];
 
         for (int i = 0; i < samples.size(); i++) {
             Sample sample = samples.get(i);
-            List<Double> coordinates = sample.getCoordinates();
-            for (int j = 0; j < coordinates.size(); j++) {
-                Double coordinate = coordinates.get(j);
+            double[] coordinates = sample.getCoordinates();
+            for (int j = 0; j < coordinates.length; j++) {
+                double coordinate = coordinates[j];
                 sumCoordinates[j] = sumCoordinates[j] + coordinate;
             }
         }
@@ -131,17 +130,11 @@ public class Cluster {
     public static void main(String[] args) {
 
         List<Sample> samples = new ArrayList<Sample>();
-        Sample sampleX1 = new Sample();
-        sampleX1.setCoordinates(Lists.newArrayList(25.0, 20.0, 10.0));
-        sampleX1.setPatternLabel("x1");
+        Sample sampleX1 = new Sample(new double[] {25.0, 20.0, 10.0}, "x1", 1);
 
-        Sample sampleX2 = new Sample();
-        sampleX2.setCoordinates(Lists.newArrayList(25.0, 40.0, 10.0));
-        sampleX2.setPatternLabel("x2");
+        Sample sampleX2 = new Sample(new double[]{25.0, 40.0, 10.0}, "x2", 2);
 
-        Sample sampleX3 = new Sample();
-        sampleX3.setCoordinates(Lists.newArrayList(70.0, 20.0, 20.0));
-        sampleX3.setPatternLabel("x3");
+        Sample sampleX3 = new Sample(new double[]{70.0, 20.0, 20.0}, "x3", 3);
 
         samples.add(sampleX1);
         samples.add(sampleX2);

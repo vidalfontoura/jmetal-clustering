@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.util.Pair;
@@ -246,7 +247,25 @@ public class Patterns {
     }   
     
     
+    public double[] getCoordinatesByPatternLabel(String label) {
+    	 for (PatternDescription it1: patternsDescription){ 
+    		 if (it1.getPatternLabel().equals(label)) {
+    			 return it1.getValues();
+    		 }
+    	 }
+    	 throw new RuntimeException("Label: "+label+" not found in the PatternsDescription while looking for PatternNumber");
+    	
+    }
     
+    public int getPatternNumberByPatternLabel(String label) {
+   	 for (PatternDescription it1: patternsDescription){ 
+   		 if (it1.getPatternLabel().equals(label)) {
+   			 return it1.getPatternNumber();
+   		 }
+   	 }
+   	 throw new RuntimeException("Label: "+label+" not found and PatternsDescription while looking for PatternNumber");
+   	
+   }
     
     public List<PatternDescription> getPatternsDescription() {
 		return patternsDescription;

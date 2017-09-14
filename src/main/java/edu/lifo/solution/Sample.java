@@ -1,56 +1,31 @@
 package edu.lifo.solution;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Sample {
 	
     private int patternId;
 	private String patternLabel;
-    private List<Double> coordinates;
-    
+    private double[] coordinates;
 
+    public Sample(double[] coordinates, String patternLabel, int patternId) {
+        this.coordinates = coordinates;
+        this.patternLabel = patternLabel;
+        this.patternId = patternId;
+    }
+
+    
     public int getPatternId() {
 
         return patternId;
-    }
-
-    public void setPatternId(int patternId) {
-
-        this.patternId = patternId;
     }
 
     public String getPatternLabel() {
 		return patternLabel;
 	}
 
-	public void setPatternLabel(String patternLabel) {
-		this.patternLabel = patternLabel;
+    public double[] getCoordinates() {
+		return coordinates;
 	}
-
-    public Sample() {
-    }
-
-    public Sample(List<Double> coordinates, String patternLabel) {
-        setCoordinates(coordinates);
-        this.patternLabel = patternLabel;
-    }
-
-
-    public List<Double> getCoordinates() {
-
-        if (coordinates == null) {
-            coordinates = new ArrayList<Double>();
-        }
-        return coordinates;
-    }
-
-    public void setCoordinates(List<Double> coordinates) {
-
-        this.coordinates = coordinates;
-    }
-
 
     @Override
     public String toString() {
@@ -91,12 +66,6 @@ public class Sample {
         return true;
     }
 
-    public Sample copy() {
-
-        Sample point = new Sample();
-        point.coordinates = new ArrayList<Double>(coordinates);
-        return point;
-    }
 
 
 }

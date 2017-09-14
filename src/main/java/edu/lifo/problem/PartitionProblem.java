@@ -1,6 +1,5 @@
 package edu.lifo.problem;
 
-import com.google.common.collect.Lists;
 
 import edu.lifo.migrated.PatternDescription;
 import edu.lifo.migrated.Patterns;
@@ -8,12 +7,17 @@ import edu.lifo.solution.Cluster;
 import edu.lifo.solution.PartitionSolution;
 import edu.lifo.solution.Sample;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.uma.jmetal.problem.Problem;
 
-public class ClusteringProblem implements Problem<PartitionSolution> {
+import com.google.common.collect.Lists;
+
+public class PartitionProblem implements Problem<PartitionSolution> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -24,15 +28,19 @@ public class ClusteringProblem implements Problem<PartitionSolution> {
     private double L;
 
     EuclideanDistance distance = new EuclideanDistance();
+    
+    
+    private Iterator<Map<Integer, List<String>>> iterator;
 
-    public ClusteringProblem(int kMin, int kMax, int numberOfObjectives, String dataSetPath, String filePatternsPath,
-        double L) {
+    public PartitionProblem(int kMin, int kMax, int numberOfObjectives, String dataSetPath, String filePatternsPath, double L,
+    		List<Map<Integer, List<String>>> initialPopulation) {
 		this.kMin = kMin;
 		this.kMax = kMax;
 		this.numberOfObjectives = numberOfObjectives;
 		
         this.patterns = new Patterns(dataSetPath, filePatternsPath);
         this.L = L;
+        this.iterator = initialPopulation.iterator();
 
 	}
 
@@ -59,6 +67,15 @@ public class ClusteringProblem implements Problem<PartitionSolution> {
 	@Override
     public void evaluate(PartitionSolution solution) {
 		
+		solution.printPartition();
+		
+		double calculateVarIntraCluster = calculateVarIntraCluster(solution);
+		
+		double calculateConnectivity = calculateConnectivity(solution);
+		
+		
+		System.out.println("VAR:"+calculateVarIntraCluster);
+		System.out.println("CON: "+calculateConnectivity);
 		
 		
 
@@ -77,31 +94,31 @@ public class ClusteringProblem implements Problem<PartitionSolution> {
             List<Sample> samples = cluster.getSamples();
             for (int j = 0; j < samples.size(); j++) {
                 Sample sample = samples.get(j);
-                List<Double> coordinates = sample.getCoordinates();
+                double[] coordinates = sample.getCoordinates();
                 var +=
-                    distance.compute(centroid.stream().mapToDouble(Double::doubleValue).toArray(), coordinates.stream()
-                        .mapToDouble(Double::doubleValue).toArray());
+                    distance.compute(centroid.stream().mapToDouble(Double::doubleValue).toArray(), coordinates);
             }
-
         }
         return var;
     }
 
     public double calculateConnectivity(PartitionSolution solution) {
 		
-            
             double conn = 0.0;
             int nPat = patterns.getPatternsDescription().size();
             double nn = Math.ceil(nPat * L/100); // number of nearest neighbors is L% of the size of the dataset
             int nNearestNeighbors = (int) nn;
-           
+            int numberOfVariables = solution.getNumberOfVariables();
+            
+       
             for (PatternDescription patternDescription : patterns.getPatternsDescription()) {
                 double somaNN = 0.0;
                 for (int j = 0; j < nNearestNeighbors; j++){
                     
                     
                     if (solution.clusterOf(patternDescription.getPatternNumber()) !=
-                        solution.clusterOf(Pe.patterns->nnList[(*it1).patternNumber][j])) {
+                        solution.clusterOf(
+                        		patterns.getNnList().get(patternDescription.getPatternNumber()).get(j))) {
                         double jj = (j + 1);
                         somaNN += 1.0 / jj; // j + 1 porque j � 0 para o 1o vizinho... 
                     }
@@ -116,7 +133,29 @@ public class ClusteringProblem implements Problem<PartitionSolution> {
 	@Override
     public PartitionSolution createSolution() {
 		
-        return null;
+		if (iterator.hasNext()) {
+			Map<Integer, List<String>> next = iterator.next();
+			List<Cluster> clusterList = Lists.newArrayList();
+			for (Integer clusterId:  next.keySet()) {
+				
+				
+				List<String> patternLabels = next.get(clusterId);
+				List<Sample> samples = Lists.newArrayList();
+				for (String patternLabel: patternLabels) {
+					double[] coordinatesByPatternLabel = patterns.getCoordinatesByPatternLabel(patternLabel);
+					int patternNumberByPatternLabel = patterns.getPatternNumberByPatternLabel(patternLabel);
+					Sample sample = new Sample(coordinatesByPatternLabel, patternLabel, patternNumberByPatternLabel);
+					samples.add(sample);
+				}
+				
+				Cluster cluster = new Cluster(samples, clusterId);
+				clusterList.add(cluster);
+			}
+			PartitionSolution partitionSolution = new PartitionSolution(clusterList);
+	        return partitionSolution;
+		}
+		throw new RuntimeException("Iterator hasNext return false. Throwing error");
+		
 		
 	}
 
