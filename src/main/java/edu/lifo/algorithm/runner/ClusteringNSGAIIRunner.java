@@ -23,6 +23,7 @@ import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 import edu.lifo.dataset.reader.DatasetReader;
+import edu.lifo.migrated.Patterns;
 import edu.lifo.mo.nsgaii.ClusteringNSGAII;
 import edu.lifo.operators.MCLACrossover;
 import edu.lifo.problem.PartitionProblem;
@@ -52,9 +53,15 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	    int minK = 3;
 	    int maxK = 6;
 	    int numberOfObjectives = 2;
-	    String datasetPath = "/home/lifo/Downloads/iris/iris-dataset.txt";
-	    String filePatternsPath = "/home/lifo/Downloads/iris/true partition/iris-truePartition.txt";
-	    String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
+//	    String datasetPath = "/home/lifo/Downloads/iris/iris-dataset.txt";
+//	    String filePatternsPath = "/home/lifo/Downloads/iris/true partition/iris-truePartition.txt";
+//	    String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
+//	    
+	    
+		String datasetPath = "/home/lifo/Downloads/iris-testes/iris-dataset.txt";
+		String filePatternsPath = "/home/lifo/Downloads/iris-testes/true partition/iris-truePartition.txt";
+		String initialPartitionPath = "/home/lifo/Downloads/iris-testes/partitions";
+	    
 	    double L = 5;
 	    
 	    List<Map<Integer, List<String>>> readInitialPartitions = DatasetReader.readInitialPartitions(initialPartitionPath);
@@ -62,10 +69,12 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	    int populationSize = readInitialPartitions.size();
 	    int maxEvaluations = 25000;
 	    
-	    problem = new PartitionProblem(minK, maxK, numberOfObjectives, datasetPath, filePatternsPath, L, readInitialPartitions);
+	    Patterns patterns = new Patterns(datasetPath, filePatternsPath);
+	    
+	    problem = new PartitionProblem(minK, maxK, numberOfObjectives, L, readInitialPartitions, patterns);
 
 	    double crossoverProbability = 0.9 ;
-	    crossover = new MCLACrossover(crossoverProbability) ;
+	    crossover = new MCLACrossover(crossoverProbability, patterns) ;
 
 	    selection = new BinaryTournamentSelection<PartitionSolution>(new RankingAndCrowdingDistanceComparator<PartitionSolution>());
 

@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.uma.jmetal.solution.Solution;
+
+import edu.lifo.migrated.Patterns;
+import edu.lifo.problem.PartitionProblem;
 
 public class PartitionSolution implements Solution<Cluster> {
 
@@ -15,16 +20,25 @@ public class PartitionSolution implements Solution<Cluster> {
 	private double[] objectives;
 	private List<Cluster> clusters;
 	
-	public PartitionSolution(List<Cluster> clusters) {
+	protected Map<Object, Object> attributes ;
+	protected PartitionProblem problem;
+	private Patterns patterns;
+	
+	public PartitionSolution(List<Cluster> clusters, PartitionProblem problem,  Patterns patterns) {
+		this.attributes = new HashMap<>() ;
 		this.clusters = new ArrayList<>(clusters);
+		this.objectives = new double[problem.getNumberOfObjectives()] ;
+		this.problem = problem;
+		this.patterns =  patterns;
 	}
 	
-	
-	public PartitionSolution(double[] objectives, List<Cluster> clusters) {
-		this.clusters = new ArrayList<>(clusters);
-		this.objectives = Arrays.copyOf(objectives, objectives.length);
+	public Patterns getPatterns() {
+		return this.patterns;
 	}
 	
+	public int getNumberOfClusters() {
+		return clusters.size();
+	}
 	
     // return the label of the cluster of the pattern "pattern"
     public int clusterOf(int pattern) {
@@ -73,6 +87,10 @@ public class PartitionSolution implements Solution<Cluster> {
 		}
 	}
 	
+	public List<Cluster> getClusters() {
+		return clusters;
+	}
+	
 	
 	@Override
 	public void setObjective(int index, double value) {
@@ -117,13 +135,13 @@ public class PartitionSolution implements Solution<Cluster> {
 
 	@Override
 	public void setAttribute(Object id, Object value) {
-		throw new RuntimeException("Not implemented");
+		this.attributes.put(id, value) ;
 		
 	}
 
 	@Override
 	public Object getAttribute(Object id) {
-		throw new RuntimeException("Not implemented");
+		return attributes.get(id) ;
 	}
 
 }

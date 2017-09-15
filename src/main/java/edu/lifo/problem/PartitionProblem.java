@@ -32,13 +32,13 @@ public class PartitionProblem implements Problem<PartitionSolution> {
     
     private Iterator<Map<Integer, List<String>>> iterator;
 
-    public PartitionProblem(int kMin, int kMax, int numberOfObjectives, String dataSetPath, String filePatternsPath, double L,
-    		List<Map<Integer, List<String>>> initialPopulation) {
+    public PartitionProblem(int kMin, int kMax, int numberOfObjectives, double L,
+    		List<Map<Integer, List<String>>> initialPopulation, Patterns patterns) {
 		this.kMin = kMin;
 		this.kMax = kMax;
 		this.numberOfObjectives = numberOfObjectives;
 		
-        this.patterns = new Patterns(dataSetPath, filePatternsPath);
+		this.patterns = patterns;
         this.L = L;
         this.iterator = initialPopulation.iterator();
 
@@ -67,7 +67,7 @@ public class PartitionProblem implements Problem<PartitionSolution> {
 	@Override
     public void evaluate(PartitionSolution solution) {
 		
-		solution.printPartition();
+//		solution.printPartition();
 		
 		double calculateVarIntraCluster = calculateVarIntraCluster(solution);
 		
@@ -108,8 +108,30 @@ public class PartitionProblem implements Problem<PartitionSolution> {
             int nPat = patterns.getPatternsDescription().size();
             double nn = Math.ceil(nPat * L/100); // number of nearest neighbors is L% of the size of the dataset
             int nNearestNeighbors = (int) nn;
-            int numberOfVariables = solution.getNumberOfVariables();
             
+//            for (PatternDescription patternDescription : patterns.getPatternsDescription()) {
+//                double somaNN = 0.0;
+//                
+//                System.out.println("it1.patternNumber: " + patternDescription.getPatternNumber());
+//                System.out.println("Pe.clusterOf(*it1).patternNumber: " 
+//                		+ solution.clusterOf(patternDescription.getPatternNumber()));
+//
+//
+//                
+//                for (int j = 0; j < nNearestNeighbors; j++){
+//                    
+//                	System.out.println("nnList[(*it1).patternNumber]["+j+"] = "+patterns.getNnList().get(patternDescription.getPatternNumber()).get(j));
+//	                      
+//                	System.out.println("Pe.clusterOf(Pe.patterns->nnList[(*it1).patternNumber]["+j+"] = " + solution.clusterOf(
+//                    		patterns.getNnList().get(patternDescription.getPatternNumber()).get(j)));
+//                    if (solution.clusterOf(patternDescription.getPatternNumber()) !=
+//                        solution.clusterOf(
+//                        		patterns.getNnList().get(patternDescription.getPatternNumber()).get(j))) {
+//                     
+//                    	System.out.println("Entrei no fi");
+//                    }
+//                }    
+//            }    
        
             for (PatternDescription patternDescription : patterns.getPatternsDescription()) {
                 double somaNN = 0.0;
@@ -151,7 +173,7 @@ public class PartitionProblem implements Problem<PartitionSolution> {
 				Cluster cluster = new Cluster(samples, clusterId);
 				clusterList.add(cluster);
 			}
-			PartitionSolution partitionSolution = new PartitionSolution(clusterList);
+			PartitionSolution partitionSolution = new PartitionSolution(clusterList, this, this.patterns);
 	        return partitionSolution;
 		}
 		throw new RuntimeException("Iterator hasNext return false. Throwing error");
