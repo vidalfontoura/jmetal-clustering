@@ -1,17 +1,6 @@
 package edu.lifo.operators;
 
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.uma.jmetal.operator.CrossoverOperator;
-
 import com.google.common.collect.Maps;
 
 import edu.lifo.globals.ClusteringTypes;
@@ -20,6 +9,16 @@ import edu.lifo.migrated.Patterns;
 import edu.lifo.solution.Cluster;
 import edu.lifo.solution.PartitionSolution;
 import edu.lifo.solution.Sample;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.uma.jmetal.operator.CrossoverOperator;
 
 public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 
@@ -194,9 +193,10 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 		    }      
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Problem writting graphFile");
+            System.out.println("Problem writing graphFile");
 			System.exit(-1);
 		} 
+
 	    		
 		return null;
 	}
