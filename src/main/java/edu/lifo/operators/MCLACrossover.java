@@ -1,6 +1,7 @@
 package edu.lifo.operators;
 
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import edu.lifo.globals.ClusteringTypes;
@@ -10,15 +11,20 @@ import edu.lifo.solution.Cluster;
 import edu.lifo.solution.PartitionSolution;
 import edu.lifo.solution.Sample;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.uma.jmetal.operator.CrossoverOperator;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 
@@ -31,9 +37,13 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
     
     private Patterns patterns;
     
-	public MCLACrossover(double crossoverProbability, Patterns patterns) {
+    private int minK, maxK;
+
+    public MCLACrossover(double crossoverProbability, Patterns patterns, int minK, int maxK) {
 		this.crossoverProbability = crossoverProbability;
 		this.patterns = patterns;
+        this.minK = minK;
+        this.maxK = maxK;
 	}
 
 	@Override
@@ -46,30 +56,42 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 		}
 		
 		String graphPath = GRAPH_DIR + File.separator + new Date().getTime();
+
+        PartitionSolution parent1 = source.get(0);
+        PartitionSolution parent2 = source.get(1);
+
+        System.out.println("Parent1");
+        parent1.printPartition();
+
+        System.out.println("Parent2");
+        parent2.printPartition();
+
+        int kP1 = parent1.getNumberOfClusters();
+        int kP2 = parent2.getNumberOfClusters();
+
+        int nVertices = kP1 + kP2;
+
+        int nEdges = kP1 * kP2;
+
+        Map<Integer, Map<Integer, Integer>> h = Maps.newTreeMap(); // int ->
+                                                                   // indice do
+                                                                   // h, int ->
+                                                                   // objeto,
+                                                                   // int -> 0
+                                                                   // ou 1 se
+                                                                   // objeto nao
+                                                                   // pertence
+                                                                   // ou
+                                                                   // pertence
+                                                                   // ao cluster
+                                                                   // hi
+
+        int indH = 1;
+        int begin_hP1 = indH;
 		try (BufferedWriter fileWriter =
 		         new BufferedWriter(new FileWriter(graphPath));) {
 		
-			
-			PartitionSolution parent1 = source.get(0);
-			PartitionSolution parent2 = source.get(1);
-			
-			System.out.println("Parent1");
-			parent1.printPartition();
-			
-			System.out.println("Parent2");
-			parent2.printPartition();
-			
-			int kP1 = parent1.getNumberOfClusters();
-			int kP2 = parent2.getNumberOfClusters();
-			
-			int nVertices = kP1 + kP2;
-			
-			int nEdges = kP1 * kP2;    
-	
-			Map<Integer, Map<Integer, Integer> > h = Maps.newTreeMap(); // int -> indice do h, int -> objeto,  int -> 0 ou 1 se objeto nao pertence ou pertence ao cluster hi
-			
-			int indH = 1;
-			int begin_hP1 = indH; 
+
 			    
 			for (indH = begin_hP1; indH <= nVertices; indH++) {
 				  for (PatternDescription patternDescription : parent1.getPatterns().getPatternsDescription()) {
@@ -197,7 +219,47 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 			System.exit(-1);
 		} 
 
-	    		
+        int nClustersChild = JMetalRandom.getInstance().nextInt(minK, maxK);
+        File file = new File(graphPath);
+
+        MetisExecutor.executeCommand(file, String.valueOf(nClustersChild));
+        
+        
+        String resultName = graphPath + ".part." +nClustersChild;
+        
+     
+
+        // depois de particionar:
+            
+        Map<Integer, List<Integer>> mc = Maps.newTreeMap(); // meta-clusters:
+                                                            // int -> numero do
+                                                            // mc,
+                                        // vector<int> -> clusters que compoem
+                                        // mc
+
+        Map<Integer, Map<Integer, Double>> association = Maps.newTreeMap(); // level
+                                                                            // of
+                                                                            // association  // of each object to the // mc
+        // int -> mc, int -> object, double -> association level
+
+        int metaclu = 0;
+        indH = begin_hP1;
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(resultName))) {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+
+                if (mc.get(metaclu) == null) {
+                    List<Integer> list= Lists.newArrayList();
+                }
+                mc..insert(mc[metaclu].end(), indH);
+                //std::cout << "mc: " << metaclu << "\indH: " << indH << std::endl;
+                indH++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+     
+        
 		return null;
 	}
 

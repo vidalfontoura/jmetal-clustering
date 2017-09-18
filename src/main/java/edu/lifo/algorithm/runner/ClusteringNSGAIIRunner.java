@@ -1,5 +1,12 @@
 package edu.lifo.algorithm.runner;
 
+import edu.lifo.dataset.reader.DatasetReader;
+import edu.lifo.migrated.Patterns;
+import edu.lifo.mo.nsgaii.ClusteringNSGAII;
+import edu.lifo.operators.MCLACrossover;
+import edu.lifo.problem.PartitionProblem;
+import edu.lifo.solution.PartitionSolution;
+
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
@@ -7,27 +14,15 @@ import java.util.Map;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAII45;
 import org.uma.jmetal.operator.CrossoverOperator;
-import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
-import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
-import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
-import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.JMetalLogger;
-import org.uma.jmetal.util.ProblemUtils;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
-
-import edu.lifo.dataset.reader.DatasetReader;
-import edu.lifo.migrated.Patterns;
-import edu.lifo.mo.nsgaii.ClusteringNSGAII;
-import edu.lifo.operators.MCLACrossover;
-import edu.lifo.problem.PartitionProblem;
-import edu.lifo.solution.PartitionSolution;
 
 	/**
 	 * Class to configure and run the implementation of the NSGA-II algorithm included
@@ -53,15 +48,20 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	    int minK = 3;
 	    int maxK = 6;
 	    int numberOfObjectives = 2;
-//	    String datasetPath = "/home/lifo/Downloads/iris/iris-dataset.txt";
-//	    String filePatternsPath = "/home/lifo/Downloads/iris/true partition/iris-truePartition.txt";
-//	    String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
+        // String datasetPath = "/home/lifo/Downloads/iris/iris-dataset.txt";
+        // String filePatternsPath =
+        // "/home/lifo/Downloads/iris/true partition/iris-truePartition.txt";
+        // String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
 //	    
 	    
-		String datasetPath = "/home/lifo/Downloads/iris-testes/iris-dataset.txt";
-		String filePatternsPath = "/home/lifo/Downloads/iris-testes/true partition/iris-truePartition.txt";
-		String initialPartitionPath = "/home/lifo/Downloads/iris-testes/partitions";
+//		String datasetPath = "/home/lifo/Downloads/iris-testes/iris-dataset.txt";
+//		String filePatternsPath = "/home/lifo/Downloads/iris-testes/true partition/iris-truePartition.txt";
+//		String initialPartitionPath = "/home/lifo/Downloads/iris-testes/partitions";
 	    
+        String datasetPath = "/Users/vfontoura/MOCLE/iris-test/iris-dataset.txt";
+        String filePatternsPath = "/Users/vfontoura/MOCLE/iris-test/true partition/iris-truePartition.txt";
+        String initialPartitionPath = "/Users/vfontoura/MOCLE/iris-test/partitions";
+
 	    double L = 5;
 	    
 	    List<Map<Integer, List<String>>> readInitialPartitions = DatasetReader.readInitialPartitions(initialPartitionPath);
@@ -74,7 +74,7 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	    problem = new PartitionProblem(minK, maxK, numberOfObjectives, L, readInitialPartitions, patterns);
 
 	    double crossoverProbability = 0.9 ;
-	    crossover = new MCLACrossover(crossoverProbability, patterns) ;
+        crossover = new MCLACrossover(crossoverProbability, patterns, minK, maxK);
 
 	    selection = new BinaryTournamentSelection<PartitionSolution>(new RankingAndCrowdingDistanceComparator<PartitionSolution>());
 

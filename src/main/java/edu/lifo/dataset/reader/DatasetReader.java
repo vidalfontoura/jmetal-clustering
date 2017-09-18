@@ -3,17 +3,12 @@ package edu.lifo.dataset.reader;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import edu.lifo.initial.partitions.Partition;
-import edu.lifo.solution.Sample;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -85,26 +80,27 @@ public class DatasetReader {
         
         List<Map<Integer, List<String>>> initialPartitions = Lists.newArrayList();
         for (int i = 0; i < filesOnDir.length; i++) {
-           
-        	Map<Integer, List<String>> map = Maps.newHashMap();
-        	try (BufferedReader br = Files.newBufferedReader(Paths.get(filesOnDir[i].getAbsolutePath()))) {
-        		String line = null;
-        		while ((line = br.readLine()) != null) {
-        			String[] split = line.split("\\s");
-                	Integer clusterId = Integer.valueOf(split[1]);
-                	String sampleId = split[0];
-                	if (map.get(clusterId) == null) {
-                		List<String> listSamples = Lists.newArrayList();
-                		listSamples.add(sampleId);
-                		map.put(clusterId, listSamples);
-                	} else {
-                		map.get(clusterId).add(sampleId);
-                	}
-        		}
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (!filesOnDir[i].getName().startsWith(".DS_")) {
+                Map<Integer, List<String>> map = Maps.newHashMap();
+                try (BufferedReader br = Files.newBufferedReader(Paths.get(filesOnDir[i].getAbsolutePath()))) {
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
+                        String[] split = line.split("\\s");
+                        Integer clusterId = Integer.valueOf(split[1]);
+                        String sampleId = split[0];
+                        if (map.get(clusterId) == null) {
+                            List<String> listSamples = Lists.newArrayList();
+                            listSamples.add(sampleId);
+                            map.put(clusterId, listSamples);
+                        } else {
+                            map.get(clusterId).add(sampleId);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                initialPartitions.add(map);
             }
-        	initialPartitions.add(map);
         }
         return initialPartitions;
     }
