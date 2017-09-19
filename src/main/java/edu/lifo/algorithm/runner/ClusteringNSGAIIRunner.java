@@ -54,13 +54,13 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
         // String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
 //	    
 	    
-//		String datasetPath = "/home/lifo/Downloads/iris-testes/iris-dataset.txt";
-//		String filePatternsPath = "/home/lifo/Downloads/iris-testes/true partition/iris-truePartition.txt";
-//		String initialPartitionPath = "/home/lifo/Downloads/iris-testes/partitions";
+		String datasetPath = "/home/lifo/Downloads/iris-testes/iris-dataset.txt";
+		String filePatternsPath = "/home/lifo/Downloads/iris-testes/true partition/iris-truePartition.txt";
+		String initialPartitionPath = "/home/lifo/Downloads/iris-testes/partitions";
 	    
-        String datasetPath = "/Users/vfontoura/MOCLE/iris-test/iris-dataset.txt";
-        String filePatternsPath = "/Users/vfontoura/MOCLE/iris-test/true partition/iris-truePartition.txt";
-        String initialPartitionPath = "/Users/vfontoura/MOCLE/iris-test/partitions";
+//        String datasetPath = "/Users/vfontoura/MOCLE/iris-test/iris-dataset.txt";
+//        String filePatternsPath = "/Users/vfontoura/MOCLE/iris-test/true partition/iris-truePartition.txt";
+//        String initialPartitionPath = "/Users/vfontoura/MOCLE/iris-test/partitions";
 
 	    double L = 5;
 	    

@@ -9,7 +9,6 @@ import edu.lifo.migrated.PatternDescription;
 import edu.lifo.migrated.Patterns;
 import edu.lifo.solution.Cluster;
 import edu.lifo.solution.PartitionSolution;
-import edu.lifo.solution.Sample;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
@@ -107,13 +107,13 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 			
 			indH = begin_hP1;        
 		    for (Cluster c: parent1.getClusters()) {           
-		        for (Sample it: c.getSamples()){
+		        for (Integer patternNumber: c.getListPatternNumber()){
 		        	 if (h.get(indH) == null) {
 						  Map<Integer,Integer> map = Maps.newTreeMap();
-						  map.put(it.getPatternId(), 1);
+						  map.put(patternNumber, 1);
 						  h.put(indH, map);
 					  }else {
-						  h.get(indH).put(it.getPatternId(), 1);
+						  h.get(indH).put(patternNumber, 1);
 					  }
 		        }    
 		        indH++;
@@ -122,13 +122,13 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 		    int end_hP1 = indH - 1;
 		    int begin_hP2 = indH;
 		    for (Cluster c: parent2.getClusters()) {      
-		    	for (Sample it: c.getSamples()){
+		    	for (Integer patternNumber: c.getListPatternNumber()){
 		            if (h.get(indH) == null) {
 						  Map<Integer,Integer> map = Maps.newTreeMap();
-						  map.put(it.getPatternId(), 1);
+						  map.put(patternNumber, 1);
 						  h.put(indH, map);
 					  }else {
-						  h.get(indH).put(it.getPatternId(), 1);
+						  h.get(indH).put(patternNumber, 1);
 					  }
 		        }    
 		        indH++;
@@ -240,25 +240,109 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
         Map<Integer, Map<Integer, Double>> association = Maps.newTreeMap(); // level
                                                                             // of
                                                                             // association  // of each object to the // mc
-        // int -> mc, int -> object, double -> association level
+        																	// int -> mc, int -> object, double -> association level
 
+        
+        
         int metaclu = 0;
         indH = begin_hP1;
         try (BufferedReader br = Files.newBufferedReader(Paths.get(resultName))) {
             String line = null;
             while ((line = br.readLine()) != null) {
-
+            	metaclu = Integer.valueOf(line);
                 if (mc.get(metaclu) == null) {
                     List<Integer> list= Lists.newArrayList();
-                }
-                mc..insert(mc[metaclu].end(), indH);
-                //std::cout << "mc: " << metaclu << "\indH: " << indH << std::endl;
+                    mc.put(metaclu, list);
+                } 
+                mc.get(metaclu).add(indH); //TODO: Vidal ver a ordenacao pq no codigo original estava mc[metaclu].end()
+                System.out.println("mc: "+metaclu + "indH: "+ indH);
                 indH++;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-     
+        
+        
+        for (PatternDescription patternDescription : parent1.getPatterns().getPatternsDescription()) {
+        	for (Entry<Integer, List<Integer>> entry: mc.entrySet()) {
+        		
+        		if (association.get(entry.getKey()) == null) {
+        			Map<Integer,Double> map = Maps.newTreeMap();
+        			association.put(entry.getKey(), map);
+        		}
+        		association.get(entry.getKey()).put(patternDescription.getPatternNumber(), 0.0);
+        		
+        		for (Integer value: entry.getValue()) {
+        			Double double1 = association.get(entry.getKey()).get(patternDescription.getPatternNumber());  
+        			double1 += h.get(value).get(patternDescription.getPatternNumber());
+        			association.get(entry.getKey()).put(patternDescription.getPatternNumber(), double1);  
+        			System.out.println("indH:  "+ value + " - "+ h.get(value).get(patternDescription.getPatternNumber()) + "\t");
+        		}
+        		  if (entry.getValue().size() != 0.0) {
+        			  
+        			Double double1 = association.get(entry.getKey()).get(patternDescription.getPatternNumber());  
+      				double1 /= entry.getValue().size();
+      				association.get(entry.getKey()).put(patternDescription.getPatternNumber(), double1);  
+        		  } 
+        		  System.out.println("id: " + patternDescription.getPatternNumber() + "\t mc: " + entry.getKey() + "\t association "+ association.get(entry.getKey()).get(patternDescription.getPatternNumber()));
+
+        	}
+        }
+        
+        
+        Map<Integer, Integer> highestAssociation = Maps.newTreeMap();
+       
+        for (PatternDescription patternDescription : parent1.getPatterns().getPatternsDescription()) {
+        	
+        	highestAssociation.put(patternDescription.getPatternNumber(), 0);
+            for (int i = 1; i < mc.size(); i++) // come�a do 1 para comparar com o anterior
+            {
+                if (association.get(i).get(patternDescription.getPatternNumber()) >
+                	
+                	association.get(highestAssociation.get(patternDescription.getPatternNumber()))
+                	.get(patternDescription.getPatternNumber())) {
+                	
+                	highestAssociation.put(patternDescription.getPatternNumber(), i);
+                }
+               System.out.println("id: "+patternDescription.getPatternNumber()+ " mc (highest association):  "+highestAssociation.get(patternDescription.getPatternNumber()));
+              //std::cout << "id: " << (*patternsIt).patternNumber << "\tmc (highest association): " << highestAssociation[(*patternsIt).patternNumber] << std::endl;                
+            }    
+            
+        }    
+        
+        
+
+        	
+        List<Cluster> clusters = new ArrayList<>();
+		PartitionSolution offspring = new PartitionSolution(clusters, patterns);
+        for (PatternDescription patternDescription : parent1.getPatterns().getPatternsDescription()) {
+           
+        	int patternNumber = patternDescription.getPatternNumber();
+            
+            boolean found = false;
+            Integer clusterId = highestAssociation.get(patternNumber);
+            for (Cluster c: clusters) {
+            	if (c.getClusterId() == clusterId) {
+            		found = true;
+            		break;
+            	}
+            }
+            if (found) {
+            	
+            }
+            
+            
+            
+            double[] coordinatesByPatternNumber = patterns.getCoordinatesByPatternNumber(patternNumber);
+            String patternLabel = patterns.getPatternLabelByPatternNumber(patternNumber);
+            
+            
+            
+            
+            
+            
+        }         
+           
         
 		return null;
 	}

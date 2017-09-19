@@ -5,7 +5,6 @@ import edu.lifo.migrated.PatternDescription;
 import edu.lifo.migrated.Patterns;
 import edu.lifo.solution.Cluster;
 import edu.lifo.solution.PartitionSolution;
-import edu.lifo.solution.Sample;
 
 import java.util.Iterator;
 import java.util.List;
@@ -86,15 +85,15 @@ public class PartitionProblem implements Problem<PartitionSolution> {
         int numberOfVariables = solution.getNumberOfVariables();
 
         double var = -1;
-
         for (int i = 0; i < numberOfVariables; i++) {
             Cluster cluster = solution.getVariableValue(i);
             List<Double> centroid = cluster.getCentroidCoordinates();
 
-            List<Sample> samples = cluster.getSamples();
-            for (int j = 0; j < samples.size(); j++) {
-                Sample sample = samples.get(j);
-                double[] coordinates = sample.getCoordinates();
+            List<Integer> patternNumbers = cluster.getListPatternNumber();
+            for (int j = 0; j < patternNumbers.size(); j++) {
+            	
+                Integer patternNumber = patternNumbers.get(j);
+                double[] coordinates = patterns.getCoordinatesByPatternNumber(patternNumber);
                 var +=
                     distance.compute(centroid.stream().mapToDouble(Double::doubleValue).toArray(), coordinates);
             }
@@ -162,18 +161,15 @@ public class PartitionProblem implements Problem<PartitionSolution> {
 				
 				
 				List<String> patternLabels = next.get(clusterId);
-				List<Sample> samples = Lists.newArrayList();
+				List<Integer> patternNumbers = Lists.newArrayList();
 				for (String patternLabel: patternLabels) {
-					double[] coordinatesByPatternLabel = patterns.getCoordinatesByPatternLabel(patternLabel);
 					int patternNumberByPatternLabel = patterns.getPatternNumberByPatternLabel(patternLabel);
-					Sample sample = new Sample(coordinatesByPatternLabel, patternLabel, patternNumberByPatternLabel);
-					samples.add(sample);
+					patternNumbers.add(patternNumberByPatternLabel);
 				}
-				
-				Cluster cluster = new Cluster(samples, clusterId);
+				Cluster cluster = new Cluster(patternNumbers, clusterId, this.patterns);
 				clusterList.add(cluster);
 			}
-			PartitionSolution partitionSolution = new PartitionSolution(clusterList, this, this.patterns);
+			PartitionSolution partitionSolution = new PartitionSolution(clusterList, this.patterns);
 	        return partitionSolution;
 		}
 		throw new RuntimeException("Iterator hasNext return false. Throwing error");

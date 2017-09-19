@@ -20,15 +20,13 @@ public class PartitionSolution implements Solution<Cluster> {
 	private double[] objectives;
 	private List<Cluster> clusters;
 	
-	protected Map<Object, Object> attributes ;
-	protected PartitionProblem problem;
+	protected Map<Object, Object> attributes;
 	private Patterns patterns;
 	
-	public PartitionSolution(List<Cluster> clusters, PartitionProblem problem,  Patterns patterns) {
+	public PartitionSolution(List<Cluster> clusters,  Patterns patterns) {
 		this.attributes = new HashMap<>() ;
 		this.clusters = new ArrayList<>(clusters);
-		this.objectives = new double[problem.getNumberOfObjectives()] ;
-		this.problem = problem;
+		this.objectives = new double[2];
 		this.patterns =  patterns;
 	}
 	
@@ -44,34 +42,31 @@ public class PartitionSolution implements Solution<Cluster> {
     public int clusterOf(int pattern) {
 
         for (Cluster it : clusters) {
-            List<Sample> samples = it.getSamples();
-            for (Sample sample : samples) {
-                if (sample.getPatternId() == pattern) {
+            
+            for (Integer patternNumber : it.getListPatternNumber()) {
+                if (patternNumber == pattern) {
                     return it.getClusterId();
                 }
             }
 	    }    
 	    return -1;
 	}
-	/**
-	 * Copy Constructor
-	 * @param copy
-	 */
-	public PartitionSolution(PartitionSolution copy) {
+
+    
+    public PartitionSolution(PartitionSolution copy) {
 		this.objectives = Arrays.copyOf(copy.objectives, copy.objectives.length);
 		this.clusters = new ArrayList<>(copy.clusters);
 	}
-	
 	
 	public void printPartition() {
 		for (Cluster cluster: clusters) {
 			System.out.print("Cluster "+cluster.getClusterId()+":");
 			
-			Collections.sort(cluster.getSamples(), new Comparator<Sample>() {
+			Collections.sort(cluster.getListPatternNumber(), new Comparator<Integer>() {
 
 				@Override
-				public int compare(Sample o1, Sample o2) {
-					if (o1.getPatternId() > o2.getPatternId()) {
+				public int compare(Integer o1, Integer o2) {
+					if (o1 > o2) {
 						return 1;
 					}
 					return -1;
@@ -79,8 +74,8 @@ public class PartitionSolution implements Solution<Cluster> {
 			
 			});
 			System.out.print(" ");
-			for (Sample sample: cluster.getSamples()) {
-				System.out.print(sample.getPatternId()+ "  ");
+			for (Integer patterNumber: cluster.getListPatternNumber()) {
+				System.out.print(patterNumber+ "  ");
 			}
 			System.out.println();
 			

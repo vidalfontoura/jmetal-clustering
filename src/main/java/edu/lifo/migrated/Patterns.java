@@ -36,6 +36,8 @@ public class Patterns {
     
     private PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
     
+    private int dimension;
+    
     // class constructor
     public Patterns(){
         dataset = null;
@@ -244,7 +246,11 @@ public class Patterns {
         	}
         }
     
-    }   
+    } 
+    
+    public int getDatasetDimension() {
+    	return patternsDescription.get(0).getValues().length;
+    }
     
     
     public double[] getCoordinatesByPatternLabel(String label) {
@@ -257,6 +263,16 @@ public class Patterns {
     	
     }
     
+    public double[] getCoordinatesByPatternNumber(int patternNumber) {
+   	 for (PatternDescription it1: patternsDescription){ 
+   		 if (it1.getPatternNumber() == patternNumber) {
+   			 return it1.getValues();
+   		 }
+   	 }
+   	 throw new RuntimeException("Patternnumber: "+patternNumber+" not found in the PatternsDescription while looking for coordinates");
+   	
+   }
+    
     public int getPatternNumberByPatternLabel(String label) {
    	 for (PatternDescription it1: patternsDescription){ 
    		 if (it1.getPatternLabel().equals(label)) {
@@ -266,6 +282,17 @@ public class Patterns {
    	 throw new RuntimeException("Label: "+label+" not found and PatternsDescription while looking for PatternNumber");
    	
    }
+    
+    
+    public String getPatternLabelByPatternNumber(Integer patternNumber) {
+      	 for (PatternDescription it1: patternsDescription){ 
+      		 if (it1.getPatternNumber() ==  patternNumber) {
+      			 return it1.getPatternLabel();
+      		 }
+      	 }
+      	 throw new RuntimeException("Patternumber: "+patternNumber+" not found and PatternsDescription while looking for patternlabel");
+      	
+      }
     
     public List<PatternDescription> getPatternsDescription() {
 		return patternsDescription;

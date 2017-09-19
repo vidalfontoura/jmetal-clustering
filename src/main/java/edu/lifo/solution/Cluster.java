@@ -4,34 +4,25 @@ package edu.lifo.solution;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.lifo.migrated.Patterns;
+
 public class Cluster {
 
     private List<Double> centroidCoordinates;
-    private List<Sample> samples;
     private int clusterId;
+    private List<Integer> listPatternNumber;
+    
+    private Patterns patterns;
 
-    public Cluster () {
 
-    }
-
-    public Cluster(List<Sample> samples, int clusterId) {
+    public Cluster(List<Integer> listPatternNumber, int clusterId, Patterns patterns) {
     	this.clusterId = clusterId;
-    	this.samples = samples;
+    	this.listPatternNumber = listPatternNumber;
+    	 this.patterns = patterns;
         this.updateCentroid();
+       
     }
 
-    public List<Sample> getSamples() {
-		return samples;
-	}
-
-	public void setSamples(List<Sample> samples) {
-		this.samples = samples;
-        this.updateCentroid();
-	}
-
-	public boolean isEmpty () {
-        return (getSamples().isEmpty ()? true: false);
-    }
 
     @Override
     public String toString () {
@@ -57,38 +48,51 @@ public class Cluster {
 
         this.centroidCoordinates = centroidCoordinates;
     }
+    
+    public List<Integer> getListPatternNumber() {
+		return listPatternNumber;
+	}
+    
+    public void setListPatternNumber(List<Integer> listPatternNumber) {
+		this.listPatternNumber = listPatternNumber;
+	}
 
     public void updateCentroid() {
-        int dimesion = samples.get(0).getCoordinates().length;
-        double[] sumCoordinates = new double[dimesion];
+        
+        int dimension = this.patterns.getDatasetDimension();
+        double[] sumCoordinates = new double[dimension];
 
-        for (int i = 0; i < samples.size(); i++) {
-            Sample sample = samples.get(i);
-            double[] coordinates = sample.getCoordinates();
-            for (int j = 0; j < coordinates.length; j++) {
+        for(Integer patternNumber: listPatternNumber) {
+        	double[] coordinates = this.patterns.getCoordinatesByPatternNumber(patternNumber);
+        	for (int j = 0; j < coordinates.length; j++) {
                 double coordinate = coordinates[j];
                 sumCoordinates[j] = sumCoordinates[j] + coordinate;
             }
         }
-
+        
         centroidCoordinates = new ArrayList<Double>();
         for (int i = 0; i < sumCoordinates.length; i++) {
-            double mean = sumCoordinates[i] / samples.size();
+            double mean = sumCoordinates[i] / listPatternNumber.size();
             centroidCoordinates.add(mean);
         }
+        
+        
+//        
+//        for (int i = 0; i < samples.size(); i++) {
+//            Sample sample = samples.get(i);
+//            double[] coordinates = sample.getCoordinates();
+//            for (int j = 0; j < coordinates.length; j++) {
+//                double coordinate = coordinates[j];
+//                sumCoordinates[j] = sumCoordinates[j] + coordinate;
+//            }
+//        }
+//
+//        centroidCoordinates = new ArrayList<Double>();
+//        for (int i = 0; i < sumCoordinates.length; i++) {
+//            double mean = sumCoordinates[i] / samples.size();
+//            centroidCoordinates.add(mean);
+//        }
 
-    }
-
-    public void printCluster() {
-        System.out.println ();
-        System.out.println ("ClusterId:" + clusterId);
-        if (samples != null) {
-            System.out.println("Points size:" + samples.size());
-            for (Sample p : samples) {
-                System.out.println (p.toString ());
-            }
-        }
-        System.out.println ();
     }
 
     @Override
@@ -98,7 +102,7 @@ public class Cluster {
         int result = 1;
         result = prime * result + ((centroidCoordinates == null) ? 0 : centroidCoordinates.hashCode());
         result = prime * result + clusterId;
-        result = prime * result + ((samples == null) ? 0 : samples.hashCode());
+        result = prime * result + ((listPatternNumber == null) ? 0 : listPatternNumber.hashCode());
         return result;
     }
 
@@ -119,31 +123,17 @@ public class Cluster {
             return false;
         if (clusterId != other.clusterId)
             return false;
-        if (samples == null) {
-            if (other.samples != null)
+        if (listPatternNumber == null) {
+            if (other.listPatternNumber != null)
                 return false;
-        } else if (!samples.equals(other.samples))
+        } else if (!listPatternNumber.equals(other.listPatternNumber))
             return false;
         return true;
     }
 
     public static void main(String[] args) {
 
-        List<Sample> samples = new ArrayList<Sample>();
-        Sample sampleX1 = new Sample(new double[] {25.0, 20.0, 10.0}, "x1", 1);
 
-        Sample sampleX2 = new Sample(new double[]{25.0, 40.0, 10.0}, "x2", 2);
-
-        Sample sampleX3 = new Sample(new double[]{70.0, 20.0, 20.0}, "x3", 3);
-
-        samples.add(sampleX1);
-        samples.add(sampleX2);
-        samples.add(sampleX3);
-
-        Cluster cluster = new Cluster();
-        cluster.setSamples(samples);
-
-        System.out.println(cluster.getCentroidCoordinates());
 
     }
 
