@@ -4,6 +4,8 @@ package edu.lifo.solution;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import edu.lifo.migrated.Patterns;
 
 public class Cluster {
@@ -22,7 +24,11 @@ public class Cluster {
         this.updateCentroid();
        
     }
-
+    
+    public Cluster(Patterns patterns) {
+    	this.patterns = patterns;
+    }
+    
 
     @Override
     public String toString () {
@@ -50,12 +56,14 @@ public class Cluster {
     }
     
     public List<Integer> getListPatternNumber() {
+    	if (listPatternNumber == null) {
+    		List<Integer> list = Lists.newArrayList();
+    		this.listPatternNumber = list;
+    	}
 		return listPatternNumber;
 	}
     
-    public void setListPatternNumber(List<Integer> listPatternNumber) {
-		this.listPatternNumber = listPatternNumber;
-	}
+ 
 
     public void updateCentroid() {
         

@@ -139,4 +139,34 @@ public class PartitionSolution implements Solution<Cluster> {
 		return attributes.get(id) ;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((clusters == null) ? 0 : clusters.hashCode());
+		result = prime * result + Arrays.hashCode(objectives);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PartitionSolution other = (PartitionSolution) obj;
+		if (clusters == null) {
+			if (other.clusters != null)
+				return false;
+		} else if (!clusters.equals(other.clusters))
+			return false;
+		if (!Arrays.equals(objectives, other.objectives))
+			return false;
+		return true;
+	}
+	
+	
+
 }

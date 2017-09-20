@@ -75,7 +75,7 @@ public class ClusteringNSGAII<S extends Solution<?>> implements Algorithm<List<S
         List<S> offspring = crossoverOperator.execute(parents);
 
         offspringPopulation.add(offspring.get(0));
-        offspringPopulation.add(offspring.get(1));
+//        offspringPopulation.add(offspring.get(1));
       }
 
       evaluatePopulation(offspringPopulation) ;

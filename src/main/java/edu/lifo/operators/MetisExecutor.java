@@ -56,7 +56,7 @@ public class MetisExecutor {
 
         Runtime r = Runtime.getRuntime();
         try {
-            String[] command = new String[] { "/usr/local/bin/gpmetis", file.getAbsolutePath(), k };
+            String[] command = new String[] { "/usr/local/bin/gpmetis", "-dbglvl=0", file.getAbsolutePath(), k };
 
             Process p = r.exec(command);
     
@@ -68,7 +68,7 @@ public class MetisExecutor {
             // Read the ls output
             String line;
             while ((line = bufferedreader.readLine()) != null) {
-                System.out.println(line);
+//                System.out.println(line);
             }
             // Check for ls failure
             try {

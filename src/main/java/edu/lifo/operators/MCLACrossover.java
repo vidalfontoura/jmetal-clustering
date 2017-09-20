@@ -3,6 +3,7 @@ package edu.lifo.operators;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.sun.javafx.scene.traversal.Hueristic2D;
 
 import edu.lifo.globals.ClusteringTypes;
 import edu.lifo.migrated.PatternDescription;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
@@ -31,7 +33,6 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
     private static final long serialVersionUID = 1L;
     
     private static final String GRAPH_DIR = "graphDir";
-    
     
     private double crossoverProbability;
     
@@ -65,6 +66,7 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 
         System.out.println("Parent2");
         parent2.printPartition();
+        
 
         int kP1 = parent1.getNumberOfClusters();
         int kP2 = parent2.getNumberOfClusters();
@@ -263,88 +265,93 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
         }
         
         
-        for (PatternDescription patternDescription : parent1.getPatterns().getPatternsDescription()) {
-        	for (Entry<Integer, List<Integer>> entry: mc.entrySet()) {
-        		
-        		if (association.get(entry.getKey()) == null) {
-        			Map<Integer,Double> map = Maps.newTreeMap();
-        			association.put(entry.getKey(), map);
-        		}
-        		association.get(entry.getKey()).put(patternDescription.getPatternNumber(), 0.0);
-        		
-        		for (Integer value: entry.getValue()) {
-        			Double double1 = association.get(entry.getKey()).get(patternDescription.getPatternNumber());  
-        			double1 += h.get(value).get(patternDescription.getPatternNumber());
-        			association.get(entry.getKey()).put(patternDescription.getPatternNumber(), double1);  
-        			System.out.println("indH:  "+ value + " - "+ h.get(value).get(patternDescription.getPatternNumber()) + "\t");
-        		}
-        		  if (entry.getValue().size() != 0.0) {
-        			  
-        			Double double1 = association.get(entry.getKey()).get(patternDescription.getPatternNumber());  
-      				double1 /= entry.getValue().size();
-      				association.get(entry.getKey()).put(patternDescription.getPatternNumber(), double1);  
-        		  } 
-        		  System.out.println("id: " + patternDescription.getPatternNumber() + "\t mc: " + entry.getKey() + "\t association "+ association.get(entry.getKey()).get(patternDescription.getPatternNumber()));
-
-        	}
+        
+        for (PatternDescription patternsIt : patterns.getPatternsDescription()) {
+           for (Entry<Integer,  List<Integer>> mcIt: mc.entrySet()) {
+        	   if (association.get(mcIt.getKey()) == null) {
+        		   association.put(mcIt.getKey(), Maps.newTreeMap());
+        	   }
+        	   association.get(mcIt.getKey()).put(patternsIt.getPatternNumber(), 0.0);
+        	   
+        	   for(Integer iH: mcIt.getValue()) {
+        		  
+        		   Double assoValue = association.get(mcIt.getKey()).get(patternsIt.getPatternNumber());
+        		   assoValue += h.get(iH).get(patternsIt.getPatternNumber());
+        		   association.get(mcIt.getKey()).put(patternsIt.getPatternNumber(), assoValue);
+        	   }
+        	   if (mcIt.getValue().size() != 0) {
+        		   Double assoValue = association.get(mcIt.getKey()).get(patternsIt.getPatternNumber());
+        		   assoValue /= mcIt.getValue().size();
+        		   association.get(mcIt.getKey()).put(patternsIt.getPatternNumber(), assoValue);
+        	   }
+           }
         }
         
-        
-        Map<Integer, Integer> highestAssociation = Maps.newTreeMap();
+//       Set<Integer> keySet = association.keySet();
+//       for (Integer key: keySet) {
+//    	   System.out.println("mc: "+key);
+//    	   Map<Integer, Double> map = association.get(key);
+//    	   for (PatternDescription description: patterns.getPatternsDescription()) {
+//    		   Double levelOfAssociation = map.get(description.getPatternNumber());
+//    		   
+//    		   System.out.println("levelOfAssociation: "+levelOfAssociation+ " with object "+ description.getPatternNumber());
+//    		   
+//    		   
+//    	   }
+//       }
        
-        for (PatternDescription patternDescription : parent1.getPatterns().getPatternsDescription()) {
-        	
-        	highestAssociation.put(patternDescription.getPatternNumber(), 0);
-            for (int i = 1; i < mc.size(); i++) // come�a do 1 para comparar com o anterior
-            {
-                if (association.get(i).get(patternDescription.getPatternNumber()) >
-                	
-                	association.get(highestAssociation.get(patternDescription.getPatternNumber()))
-                	.get(patternDescription.getPatternNumber())) {
-                	
-                	highestAssociation.put(patternDescription.getPatternNumber(), i);
-                }
-               System.out.println("id: "+patternDescription.getPatternNumber()+ " mc (highest association):  "+highestAssociation.get(patternDescription.getPatternNumber()));
-              //std::cout << "id: " << (*patternsIt).patternNumber << "\tmc (highest association): " << highestAssociation[(*patternsIt).patternNumber] << std::endl;                
-            }    
-            
-        }    
+       Map<Integer,Integer> higherAssociation = Maps.newTreeMap(); //Key -> PatternNumber, Value -> mc cluster
+       for (PatternDescription patternsIt: patterns.getPatternsDescription()) {
+    	   
+    	   Set<Integer> keySet = association.keySet();
+    	   Integer mcQualquer = keySet.iterator().next();
+    	   higherAssociation.put(patternsIt.getPatternNumber(), mcQualquer); // Coloca higher association com o primeiro mc, apenas para pode comparar logo embaixo
+    	   for (Integer mcIt: keySet) {
+    		  
+    		   Integer mcAux = higherAssociation.get(patternsIt.getPatternNumber());
+    		   Double assoLevelInHigherAsso = association.get(mcAux).get(patternsIt.getPatternNumber());
+    		   Double associationLevelWithMcIt = association.get(mcIt).get(patternsIt.getPatternNumber());
+    		   if (associationLevelWithMcIt > assoLevelInHigherAsso) {
+    			   higherAssociation.put(patternsIt.getPatternNumber(), mcIt);
+    		   }
+    	   }
+       }
         
-        
-
-        	
-        List<Cluster> clusters = new ArrayList<>();
-		PartitionSolution offspring = new PartitionSolution(clusters, patterns);
-        for (PatternDescription patternDescription : parent1.getPatterns().getPatternsDescription()) {
-           
-        	int patternNumber = patternDescription.getPatternNumber();
-            
-            boolean found = false;
-            Integer clusterId = highestAssociation.get(patternNumber);
-            for (Cluster c: clusters) {
-            	if (c.getClusterId() == clusterId) {
-            		found = true;
-            		break;
-            	}
-            }
-            if (found) {
-            	
-            }
-            
-            
-            
-            double[] coordinatesByPatternNumber = patterns.getCoordinatesByPatternNumber(patternNumber);
-            String patternLabel = patterns.getPatternLabelByPatternNumber(patternNumber);
-            
-            
-            
-            
-            
-            
-        }         
-           
-        
-		return null;
+       
+      Map<Integer,Integer> clusterCorrespondence = Maps.newTreeMap();
+      
+      int newLabel = 0;
+      for (Integer metaCluster: mc.keySet()) {
+    	  newLabel++;
+    	  clusterCorrespondence.put(metaCluster, newLabel);
+      }
+      
+      Map<Integer, List<Integer>> offspringAsMap = Maps.newTreeMap();
+      for (PatternDescription patternsIt: patterns.getPatternsDescription()) {
+    	  int patternNumber = patternsIt.getPatternNumber();
+    	  Integer mcLabel = higherAssociation.get(patternNumber);
+    	  Integer clusterLabel = clusterCorrespondence.get(mcLabel);
+    	  
+    	  List<Integer> list = offspringAsMap.get(clusterLabel);
+    	  if (list == null) {
+    		  list = Lists.newArrayList();
+    		  list.add(patternNumber);
+    		  offspringAsMap.put(clusterLabel, list);
+    	  } 
+    	  list.add(patternNumber);
+      }
+      
+      List<Cluster> clusters = Lists.newArrayList();
+      for (Integer clusterLabel: offspringAsMap.keySet()) {
+    	 Cluster cluster = new Cluster(offspringAsMap.get(clusterLabel), clusterLabel, patterns);
+    	 clusters.add(cluster);
+      }
+      PartitionSolution partitionSolution = new PartitionSolution(clusters, patterns);
+      List<PartitionSolution> newArrayList = Lists.newArrayList();  
+      newArrayList.add(partitionSolution);
+      return newArrayList;
+      
+      
 	}
 
 	@Override
