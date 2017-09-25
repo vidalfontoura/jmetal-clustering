@@ -33,7 +33,7 @@ public class Cluster {
     @Override
     public String toString () {
 
-        return "TODO: to be implemented";
+        return "ClusterId: "+clusterId+ " Patterns: "+listPatternNumber.toString();
     }
     
 

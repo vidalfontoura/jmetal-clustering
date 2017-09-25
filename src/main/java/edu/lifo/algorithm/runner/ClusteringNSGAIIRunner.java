@@ -1,6 +1,7 @@
 package edu.lifo.algorithm.runner;
 
 import edu.lifo.dataset.reader.DatasetReader;
+import edu.lifo.jmetal.util.PrintFinalSolutionSetClustering;
 import edu.lifo.migrated.Patterns;
 import edu.lifo.mo.nsgaii.ClusteringNSGAII;
 import edu.lifo.operators.MCLACrossover;
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAII45;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
@@ -25,10 +25,9 @@ import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 	/**
-	 * Class to configure and run the implementation of the NSGA-II algorithm included
-	 * in {@link NSGAII45}
+	 * Class to configure and run the implementation of the ClusteringNSGAII algorithm {@link ClusteringNSGAII}
 	 *
-	 * @author Antonio J. Nebro <antonio@lcc.uma.es>
+	 * @author vfontoura
 	 */
 public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	  /**
@@ -89,7 +88,7 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 
 	    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 
-	    printFinalSolutionSet(population);
+	    PrintFinalSolutionSetClustering.printFinalSolutionSet(population);
 	    if (!referenceParetoFront.equals("")) {
 	      printQualityIndicators(population, referenceParetoFront) ;
 	    }
