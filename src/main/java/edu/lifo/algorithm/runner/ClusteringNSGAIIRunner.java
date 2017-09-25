@@ -45,7 +45,7 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	    SelectionOperator<List<PartitionSolution>, PartitionSolution> selection;
 	    String referenceParetoFront = "" ;
 	  
-	    int minK = 3;
+	    int minK = 6;
 	    int maxK = 6;
 	    int numberOfObjectives = 2;
         // String datasetPath = "/home/lifo/Downloads/iris/iris-dataset.txt";
@@ -56,7 +56,7 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	    
 		String datasetPath = "/home/lifo/Downloads/iris-testes/iris-dataset.txt";
 		String filePatternsPath = "/home/lifo/Downloads/iris-testes/true partition/iris-truePartition.txt";
-		String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
+		String initialPartitionPath = "/home/lifo/Downloads/MOCLE/MOCLE-v3-Fix/iris-testes/partitions";
 	    
 //        String datasetPath = "/Users/vfontoura/MOCLE/iris-test/iris-dataset.txt";
 //        String filePatternsPath = "/Users/vfontoura/MOCLE/iris-test/true partition/iris-truePartition.txt";
@@ -67,7 +67,7 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	    List<Map<Integer, List<String>>> readInitialPartitions = DatasetReader.readInitialPartitions(initialPartitionPath);
 	    
 	    int populationSize = readInitialPartitions.size();
-	    int maxEvaluations = 5000;
+	    int maxEvaluations = 500;
 	    
 	    Patterns patterns = new Patterns(datasetPath, filePatternsPath);
 	    

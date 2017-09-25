@@ -287,6 +287,17 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
            }
         }
         
+        for (PatternDescription patternsIt : patterns.getPatternsDescription()) {
+        	 for (Entry<Integer,  List<Integer>> mcIt: mc.entrySet()) {
+        		 Double associationLevel = association.get(mcIt.getKey()).get(patternsIt.getPatternNumber());
+        		 System.out.println("id: "+patternsIt.getPatternNumber()+ " mc: "+mcIt.getKey() + " lvl: "+associationLevel);
+        	 }
+        		 
+        		
+
+        }
+        
+        
 //       Set<Integer> keySet = association.keySet();
 //       for (Integer key: keySet) {
 //    	   System.out.println("mc: "+key);
@@ -335,7 +346,6 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
     	  List<Integer> list = offspringAsMap.get(clusterLabel);
     	  if (list == null) {
     		  list = Lists.newArrayList();
-    		  list.add(patternNumber);
     		  offspringAsMap.put(clusterLabel, list);
     	  } 
     	  list.add(patternNumber);
@@ -347,6 +357,8 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
     	 clusters.add(cluster);
       }
       PartitionSolution partitionSolution = new PartitionSolution(clusters, patterns);
+      System.out.println("Child");
+      partitionSolution.printPartition();
       List<PartitionSolution> newArrayList = Lists.newArrayList();  
       newArrayList.add(partitionSolution);
       return newArrayList;
