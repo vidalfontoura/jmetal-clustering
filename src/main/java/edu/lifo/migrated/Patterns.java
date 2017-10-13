@@ -36,8 +36,6 @@ public class Patterns {
     
     private PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
     
-    private int dimension;
-    
     // class constructor
     public Patterns(){
         dataset = null;

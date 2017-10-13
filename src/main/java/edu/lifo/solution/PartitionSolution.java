@@ -11,7 +11,6 @@ import java.util.Map;
 import org.uma.jmetal.solution.Solution;
 
 import edu.lifo.migrated.Patterns;
-import edu.lifo.problem.PartitionProblem;
 
 public class PartitionSolution implements Solution<Cluster> {
 
@@ -74,8 +73,8 @@ public class PartitionSolution implements Solution<Cluster> {
 			
 			});
 			System.out.print(" ");
-			for (Integer patterNumber: cluster.getListPatternNumber()) {
-				System.out.print(patterNumber+ "  ");
+			for (Integer patternNumber: cluster.getListPatternNumber()) {
+				System.out.print(patternNumber+ "  ");
 			}
 			System.out.println();
 			
@@ -110,7 +109,7 @@ public class PartitionSolution implements Solution<Cluster> {
 
 	@Override
 	public String getVariableValueString(int index) {
-		return clusters.get(index).toString();
+		return clusters.get(index).toString() +"\n";
 	}
 
 	@Override

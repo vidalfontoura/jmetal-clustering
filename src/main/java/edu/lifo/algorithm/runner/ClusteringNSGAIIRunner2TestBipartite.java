@@ -4,6 +4,7 @@ import edu.lifo.dataset.reader.DatasetReader;
 import edu.lifo.jmetal.util.PrintFinalSolutionSetClustering;
 import edu.lifo.migrated.Patterns;
 import edu.lifo.mo.nsgaii.ClusteringNSGAII;
+import edu.lifo.operators.HBGFCrossover;
 import edu.lifo.operators.MCLACrossover;
 import edu.lifo.problem.PartitionProblem;
 import edu.lifo.solution.PartitionSolution;
@@ -30,7 +31,7 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 	 *
 	 * @author vfontoura
 	 */
-public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
+public class ClusteringNSGAIIRunner2TestBipartite extends AbstractAlgorithmRunner {
 	  /**
 	   * @param args Command line arguments.
 	   * @throws JMetalException
@@ -50,15 +51,14 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	    int minK = 6;
 	    int maxK = 6;
 	    int numberOfObjectives = 2;
-        // String datasetPath = "/home/lifo/Downloads/iris/iris-dataset.txt";
-        // String filePatternsPath =
-        // "/home/lifo/Downloads/iris/true partition/iris-truePartition.txt";
-        // String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
+         String datasetPath = "/home/lifo/Downloads/iris/iris-dataset.txt";
+         String filePatternsPath =
+         "/home/lifo/Downloads/iris/true partition/iris-truePartition.txt";
+         String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
 //	    
-	    
-		String datasetPath = "/home/lifo/Downloads/iris-testes/iris-dataset.txt";
-		String filePatternsPath = "/home/lifo/Downloads/iris-testes/true partition/iris-truePartition.txt";
-		String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
+//		String datasetPath = "/home/lifo/Downloads/MOCLE/MOCLE-v3-Debug/iris-testes/iris-dataset.txt";
+//		String filePatternsPath = "/home/lifo/Downloads/MOCLE/MOCLE-v3-Debug/iris-testes/true partition/iris-truePartition.txt";
+//		String initialPartitionPath = "/home/lifo/Downloads/MOCLE/MOCLE-v3-Debug/iris-testes/partitions";
 	    
 //        String datasetPath = "/Users/vfontoura/MOCLE/iris-test/iris-dataset.txt";
 //        String filePatternsPath = "/Users/vfontoura/MOCLE/iris-test/true partition/iris-truePartition.txt";
@@ -76,15 +76,13 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	    problem = new PartitionProblem(minK, maxK, numberOfObjectives, L, readInitialPartitions, patterns);
 
 	    double crossoverProbability = 0.9 ;
-        crossover = new MCLACrossover(crossoverProbability, patterns, minK, maxK);
+        crossover = new HBGFCrossover(minK, maxK);
 
 	    selection = new BinaryTournamentSelection<PartitionSolution>(new RankingAndCrowdingDistanceComparator<PartitionSolution>());
 
 	    algorithm = new ClusteringNSGAII<PartitionSolution>(problem, maxEvaluations, populationSize, crossover,
 	            selection, new SequentialSolutionListEvaluator<PartitionSolution>());
 	    
-	    JMetalRandom.getInstance().setSeed(1507118160576l);
-
 	    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
 	            .execute() ;
 

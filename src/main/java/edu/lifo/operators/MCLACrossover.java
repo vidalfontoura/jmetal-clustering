@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.sun.javafx.scene.traversal.Hueristic2D;
 
 import edu.lifo.globals.ClusteringTypes;
+import edu.lifo.index.CorrectedRandCalculator;
 import edu.lifo.migrated.PatternDescription;
 import edu.lifo.migrated.Patterns;
 import edu.lifo.solution.Cluster;
@@ -60,13 +61,13 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 
         PartitionSolution parent1 = source.get(0);
         PartitionSolution parent2 = source.get(1);
-
-        System.out.println("Parent1");
-        parent1.printPartition();
-
-        System.out.println("Parent2");
-        parent2.printPartition();
         
+//        System.out.println("Parent1 ");
+//        parent1.printPartition();
+        
+//        System.out.println("Parent2");
+//        parent2.printPartition();
+
 
         int kP1 = parent1.getNumberOfClusters();
         int kP2 = parent2.getNumberOfClusters();
@@ -138,16 +139,16 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
 		    int end_hP2 = indH - 1;
 		    
 //		    Print the hypergraph
-		    System.out.print("object\t");
-		    for (int i = begin_hP1; i <= end_hP2; i++)
-		       System.out.print("h "+ i + "\t");
-		    System.out.println();
-		    for (PatternDescription patternDescription : patterns.getPatternsDescription()) {
-		        System.out.print(patternDescription.getPatternNumber() + "\t");
-		        for (int i = begin_hP1; i <= end_hP2; i++)
-		            System.out.print(h.get(i).get(patternDescription.getPatternNumber()) +"\t");
-		        System.out.println();
-		    }   
+//		    System.out.print("object\t");
+//		    for (int i = begin_hP1; i <= end_hP2; i++)
+//		       System.out.print("h "+ i + "\t");
+//		    System.out.println();
+//		    for (PatternDescription patternDescription : patterns.getPatternsDescription()) {
+//		        System.out.print(patternDescription.getPatternNumber() + "\t");
+//		        for (int i = begin_hP1; i <= end_hP2; i++)
+//		            System.out.print(h.get(i).get(patternDescription.getPatternNumber()) +"\t");
+//		        System.out.println();
+//		    }   
 		    
 		    Map<Integer, Map<Integer, Double> > w = Maps.newHashMap(); // pesos das arestas
 		    int size1, size2, sizeInter;
@@ -257,7 +258,7 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
                     mc.put(metaclu, list);
                 } 
                 mc.get(metaclu).add(indH); //TODO: Vidal ver a ordenacao pq no codigo original estava mc[metaclu].end()
-                System.out.println("mc: "+metaclu + "indH: "+ indH);
+//                System.out.println("mc: "+metaclu + "indH: "+ indH);
                 indH++;
             }
         } catch (IOException e) {
@@ -287,15 +288,15 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
            }
         }
         
-        for (PatternDescription patternsIt : patterns.getPatternsDescription()) {
-        	 for (Entry<Integer,  List<Integer>> mcIt: mc.entrySet()) {
-        		 Double associationLevel = association.get(mcIt.getKey()).get(patternsIt.getPatternNumber());
-        		 System.out.println("id: "+patternsIt.getPatternNumber()+ " mc: "+mcIt.getKey() + " lvl: "+associationLevel);
-        	 }
-        		 
-        		
-
-        }
+//        for (PatternDescription patternsIt : patterns.getPatternsDescription()) {
+//        	 for (Entry<Integer,  List<Integer>> mcIt: mc.entrySet()) {
+//        		 Double associationLevel = association.get(mcIt.getKey()).get(patternsIt.getPatternNumber());
+//        		 System.out.println("id: "+patternsIt.getPatternNumber()+ " mc: "+mcIt.getKey() + " lvl: "+associationLevel);
+//        	 }
+//        		 
+//        		
+//
+//        }
         
         
 //       Set<Integer> keySet = association.keySet();
@@ -356,9 +357,11 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
     	 Cluster cluster = new Cluster(offspringAsMap.get(clusterLabel), clusterLabel, patterns);
     	 clusters.add(cluster);
       }
+      
+      
       PartitionSolution partitionSolution = new PartitionSolution(clusters, patterns);
-      System.out.println("Child");
-      partitionSolution.printPartition();
+      
+//      partitionSolution.printPartition();
       List<PartitionSolution> newArrayList = Lists.newArrayList();  
       newArrayList.add(partitionSolution);
       return newArrayList;

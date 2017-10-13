@@ -73,10 +73,9 @@ public class PartitionProblem implements Problem<PartitionSolution> {
 		double calculateConnectivity = calculateConnectivity(solution);
 		
 		
-		System.out.println("VAR:"+calculateVarIntraCluster);
-		System.out.println("CON: "+calculateConnectivity);
+		solution.setObjective(0, calculateVarIntraCluster);
 		
-		
+		solution.setObjective(1, calculateConnectivity);
 
 	}
 	
@@ -107,30 +106,6 @@ public class PartitionProblem implements Problem<PartitionSolution> {
             int nPat = patterns.getPatternsDescription().size();
             double nn = Math.ceil(nPat * L/100); // number of nearest neighbors is L% of the size of the dataset
             int nNearestNeighbors = (int) nn;
-            
-//            for (PatternDescription patternDescription : patterns.getPatternsDescription()) {
-//                double somaNN = 0.0;
-//                
-//                System.out.println("it1.patternNumber: " + patternDescription.getPatternNumber());
-//                System.out.println("Pe.clusterOf(*it1).patternNumber: " 
-//                		+ solution.clusterOf(patternDescription.getPatternNumber()));
-//
-//
-//                
-//                for (int j = 0; j < nNearestNeighbors; j++){
-//                    
-//                	System.out.println("nnList[(*it1).patternNumber]["+j+"] = "+patterns.getNnList().get(patternDescription.getPatternNumber()).get(j));
-//	                      
-//                	System.out.println("Pe.clusterOf(Pe.patterns->nnList[(*it1).patternNumber]["+j+"] = " + solution.clusterOf(
-//                    		patterns.getNnList().get(patternDescription.getPatternNumber()).get(j)));
-//                    if (solution.clusterOf(patternDescription.getPatternNumber()) !=
-//                        solution.clusterOf(
-//                        		patterns.getNnList().get(patternDescription.getPatternNumber()).get(j))) {
-//                     
-//                    	System.out.println("Entrei no fi");
-//                    }
-//                }    
-//            }    
        
             for (PatternDescription patternDescription : patterns.getPatternsDescription()) {
                 double somaNN = 0.0;
@@ -176,5 +151,77 @@ public class PartitionProblem implements Problem<PartitionSolution> {
 		
 		
 	}
+	
+	
+    public List<PartitionSolution> removeDominadas(List<PartitionSolution> result) {
+        boolean dominador, dominado;
+        double valor1 = 0;
+        double valor2 = 0;
+
+        for (int i = 0; i < (result.size() - 1); i++) {
+            for (int j = (i + 1); j < result.size(); j++) {
+                dominador = true;
+                dominado = true;
+
+                for (int k = 0; k < result.get(i).getNumberOfObjectives(); k++) {
+                    valor1 = result.get(i).getObjective(k);
+                    valor2 = result.get(j).getObjective(k);
+
+                    if (valor1 > valor2 || dominador == false) {
+                        dominador = false;
+                    } else if (valor1 <= valor2) {
+                        dominador = true;
+                    }
+
+                    if (valor2 > valor1 || dominado == false) {
+                        dominado = false;
+                    } else if (valor2 < valor1) {
+                        dominado = true;
+                    }
+                }
+
+                if (dominador) {
+//                    System.out.println("--------------------------------------------");
+//                    System.out.println("Solucao [" + i + "] domina a Solucao [" + j + "]");
+//                    System.out.println("[" + i + "] " + result.get(i).toString());
+//                    System.out.println("[" + j + "] " + result.get(j).toString());
+
+                    result.remove(j);
+                    j = j - 1;
+                } else if (dominado) {
+//                    System.out.println("--------------------------------------------");
+//                    System.out.println("Solucao [" + j + "] domina a Solucao [" + i + "]");
+//                    System.out.println("[" + i + "] " + result.get(i).toString());
+//                    System.out.println("[" + j + "] " + result.get(j).toString());
+
+                    result.remove(i);
+                    j = i;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    //  --  --  --  --  --  --  --  --  --  --  --  --  --  --  --  --  --  --  --  --  --  --  --  --
+//    public List<PartitionSolution> removeRepetidas(List<PartitionSolution> result) {
+//        String solucao;
+//
+//        for (int i = 0; i < result.size() - 1; i++) {
+//            solucao = result.get(i).get[0].toString();
+//            for (int j = i + 1; j < result.size(); j++) {
+//                if (solucao.equals(result.get(j).getDecisionVariables()[0].toString())) {
+////                    System.out.println("--------------------------------------------");
+////                    System.out.println("Solucao [" + i + "] e igual [" + j + "]");
+////                    System.out.println(result.get(i).getDecisionVariables()[0].toString());
+////                    System.out.println(result.get(j).getDecisionVariables()[0].toString());
+//
+//                    result.remove(j);
+//                }
+//            }
+//        }
+//
+//        return result;
+//    }
 
 }

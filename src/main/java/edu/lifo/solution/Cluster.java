@@ -33,7 +33,7 @@ public class Cluster {
     @Override
     public String toString () {
 
-        return "ClusterId: "+clusterId+ " Patterns: "+listPatternNumber.toString();
+        return +clusterId+"->"+ listPatternNumber.toString();
     }
     
 
@@ -83,23 +83,6 @@ public class Cluster {
             double mean = sumCoordinates[i] / listPatternNumber.size();
             centroidCoordinates.add(mean);
         }
-        
-        
-//        
-//        for (int i = 0; i < samples.size(); i++) {
-//            Sample sample = samples.get(i);
-//            double[] coordinates = sample.getCoordinates();
-//            for (int j = 0; j < coordinates.length; j++) {
-//                double coordinate = coordinates[j];
-//                sumCoordinates[j] = sumCoordinates[j] + coordinate;
-//            }
-//        }
-//
-//        centroidCoordinates = new ArrayList<Double>();
-//        for (int i = 0; i < sumCoordinates.length; i++) {
-//            double mean = sumCoordinates[i] / samples.size();
-//            centroidCoordinates.add(mean);
-//        }
 
     }
 

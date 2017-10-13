@@ -70,8 +70,9 @@ public class SolutionListOutputClustering {
 
     try {
       if (solutionList.size() > 0) {
-        int numberOfVariables = solutionList.get(0).getNumberOfVariables();
+
         for (int i = 0; i < solutionList.size(); i++) {
+          int numberOfVariables = solutionList.get(i).getNumberOfVariables();
           for (int j = 0; j < numberOfVariables; j++) {
             bufferedWriter.write(solutionList.get(i).getVariableValueString(j) + context.getSeparator());
           }
