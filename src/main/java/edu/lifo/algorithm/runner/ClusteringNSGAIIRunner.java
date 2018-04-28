@@ -4,7 +4,7 @@ import edu.lifo.dataset.reader.DatasetReader;
 import edu.lifo.jmetal.util.PrintFinalSolutionSetClustering;
 import edu.lifo.migrated.Patterns;
 import edu.lifo.mo.nsgaii.ClusteringNSGAII;
-import edu.lifo.operators.MCLACrossover;
+import edu.lifo.operators.MultiParentMCLACrossover;
 import edu.lifo.problem.PartitionProblem;
 import edu.lifo.solution.PartitionSolution;
 
@@ -56,13 +56,15 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
         // String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
 //	    
 	    
-		String datasetPath = "/home/lifo/Downloads/iris-testes/iris-dataset.txt";
-		String filePatternsPath = "/home/lifo/Downloads/iris-testes/true partition/iris-truePartition.txt";
-		String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
+        // String datasetPath =
+        // "/home/lifo/Downloads/iris-testes/iris-dataset.txt";
+        // String filePatternsPath =
+        // "/home/lifo/Downloads/iris-testes/true partition/iris-truePartition.txt";
+        // String initialPartitionPath = "/home/lifo/Downloads/iris/partitions";
 	    
-//        String datasetPath = "/Users/vfontoura/MOCLE/iris-test/iris-dataset.txt";
-//        String filePatternsPath = "/Users/vfontoura/MOCLE/iris-test/true partition/iris-truePartition.txt";
-//        String initialPartitionPath = "/Users/vfontoura/MOCLE/iris-test/partitions";
+        String datasetPath = "/Users/vfontoura/MOCLE/small-test/iris-dataset.txt";
+        String filePatternsPath = "/Users/vfontoura/MOCLE/small-test/true partition/iris-truePartition.txt";
+        String initialPartitionPath = "/Users/vfontoura/MOCLE/small-test/partitions";
 
 	    double L = 5;
 	    
@@ -76,7 +78,7 @@ public class ClusteringNSGAIIRunner extends AbstractAlgorithmRunner {
 	    problem = new PartitionProblem(minK, maxK, numberOfObjectives, L, readInitialPartitions, patterns);
 
 	    double crossoverProbability = 0.9 ;
-        crossover = new MCLACrossover(crossoverProbability, patterns, minK, maxK);
+        crossover = new MultiParentMCLACrossover(crossoverProbability, patterns, minK, maxK);
 
 	    selection = new BinaryTournamentSelection<PartitionSolution>(new RankingAndCrowdingDistanceComparator<PartitionSolution>());
 

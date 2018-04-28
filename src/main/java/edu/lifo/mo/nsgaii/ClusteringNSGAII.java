@@ -1,5 +1,9 @@
 package edu.lifo.mo.nsgaii;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.operator.CrossoverOperator;
@@ -12,10 +16,6 @@ import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.solutionattribute.Ranking;
 import org.uma.jmetal.util.solutionattribute.impl.CrowdingDistance;
 import org.uma.jmetal.util.solutionattribute.impl.DominanceRanking;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Implementation of NSGA-II following the scheme used in jMetal4.5 and former versions, i.e, without
@@ -68,9 +68,11 @@ public class ClusteringNSGAII<S extends Solution<?>> implements Algorithm<List<S
     while (evaluations < maxEvaluations) {
       List<S> offspringPopulation = new ArrayList<>(populationSize);
       for (int i = 0; i < populationSize; i += 2) {
-        List<S> parents = new ArrayList<>(2);
-        parents.add(selectionOperator.execute(population));
-        parents.add(selectionOperator.execute(population));
+                List<S> parents = new ArrayList<>(4);
+                parents.add(selectionOperator.execute(population));
+                parents.add(selectionOperator.execute(population));
+                // parents.add(selectionOperator.execute(population));
+                // parents.add(selectionOperator.execute(population));
 
         List<S> offspring = crossoverOperator.execute(parents);
 

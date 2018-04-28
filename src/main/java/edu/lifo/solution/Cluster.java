@@ -1,12 +1,12 @@
 package edu.lifo.solution;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 
 import edu.lifo.migrated.Patterns;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cluster {
 
@@ -55,6 +55,7 @@ public class Cluster {
         this.centroidCoordinates = centroidCoordinates;
     }
     
+
     public List<Integer> getListPatternNumber() {
     	if (listPatternNumber == null) {
     		List<Integer> list = Lists.newArrayList();
