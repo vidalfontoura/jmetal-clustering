@@ -1,65 +1,90 @@
 package edu.lifo.solution;
 
+
+import com.google.common.collect.Lists;
+
+import edu.lifo.migrated.Patterns;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Cluster {
 
-    private Pattern centroid;
-    private List<Pattern> samples;
+    private List<Double> centroidCoordinates;
+    private int clusterId;
+    private List<Integer> listPatternNumber;
+    
+    private Patterns patterns;
 
-    public Cluster () {
 
+    public Cluster(List<Integer> listPatternNumber, int clusterId, Patterns patterns) {
+    	this.clusterId = clusterId;
+    	this.listPatternNumber = listPatternNumber;
+    	 this.patterns = patterns;
+        this.updateCentroid();
+       
     }
-
-    public Cluster(List<Pattern> coordinates) {
-
+    
+    public Cluster(Patterns patterns) {
+    	this.patterns = patterns;
     }
-
-    public Pattern getCentroid () {
-        if (centroid == null) {
-            centroid = new Pattern ();
-        }
-        return centroid;
-    }
-
-    public void setCentroid (Pattern point) {
-        this.centroid = point.copy ();
-    }
-
-    public List <Pattern> getPoints () {
-
-        if (samples == null) {
-            samples = new ArrayList<Pattern>();
-        }
-        return samples;
-    }
-
-    public void setPoints(List<Pattern> sample) {
-
-        this.samples = sample;
-    }
-
-    public boolean isEmpty () {
-        return (getPoints (). isEmpty ()? true: false);
-    }
+    
 
     @Override
     public String toString () {
 
-        return "TODO: to be implemented";
+        return +clusterId+"->"+ listPatternNumber.toString();
+    }
+    
+
+    public int getClusterId() {
+		return clusterId;
+	}
+
+    public void setClusterId(int clusterId) {
+		this.clusterId = clusterId;
+	}
+
+    public List<Double> getCentroidCoordinates() {
+
+        return centroidCoordinates;
     }
 
-    public void printCluster () {
-        System.out.println ();
-        System.out.println ("Centroid:" + centroid.toString ());
-        if (samples != null) {
-            System.out.println("Points size:" + samples.size());
-            for (Pattern p : samples) {
-                System.out.println (p.toString ());
+    public void setCentroidCoordinates(List<Double> centroidCoordinates) {
+
+        this.centroidCoordinates = centroidCoordinates;
+    }
+    
+
+    public List<Integer> getListPatternNumber() {
+    	if (listPatternNumber == null) {
+    		List<Integer> list = Lists.newArrayList();
+    		this.listPatternNumber = list;
+    	}
+		return listPatternNumber;
+	}
+    
+ 
+
+    public void updateCentroid() {
+        
+        int dimension = this.patterns.getDatasetDimension();
+        double[] sumCoordinates = new double[dimension];
+
+        for(Integer patternNumber: listPatternNumber) {
+        	double[] coordinates = this.patterns.getCoordinatesByPatternNumber(patternNumber);
+        	for (int j = 0; j < coordinates.length; j++) {
+                double coordinate = coordinates[j];
+                sumCoordinates[j] = sumCoordinates[j] + coordinate;
             }
         }
-        System.out.println ();
+        
+        centroidCoordinates = new ArrayList<Double>();
+        for (int i = 0; i < sumCoordinates.length; i++) {
+            double mean = sumCoordinates[i] / listPatternNumber.size();
+            centroidCoordinates.add(mean);
+        }
+
     }
 
     @Override
@@ -67,8 +92,9 @@ public class Cluster {
 
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((centroid == null) ? 0 : centroid.hashCode());
-        result = prime * result + ((samples == null) ? 0 : samples.hashCode());
+        result = prime * result + ((centroidCoordinates == null) ? 0 : centroidCoordinates.hashCode());
+        result = prime * result + clusterId;
+        result = prime * result + ((listPatternNumber == null) ? 0 : listPatternNumber.hashCode());
         return result;
     }
 
@@ -82,17 +108,25 @@ public class Cluster {
         if (getClass() != obj.getClass())
             return false;
         Cluster other = (Cluster) obj;
-        if (centroid == null) {
-            if (other.centroid != null)
+        if (centroidCoordinates == null) {
+            if (other.centroidCoordinates != null)
                 return false;
-        } else if (!centroid.equals(other.centroid))
+        } else if (!centroidCoordinates.equals(other.centroidCoordinates))
             return false;
-        if (samples == null) {
-            if (other.samples != null)
+        if (clusterId != other.clusterId)
+            return false;
+        if (listPatternNumber == null) {
+            if (other.listPatternNumber != null)
                 return false;
-        } else if (!samples.equals(other.samples))
+        } else if (!listPatternNumber.equals(other.listPatternNumber))
             return false;
         return true;
+    }
+
+    public static void main(String[] args) {
+
+
+
     }
 
 }

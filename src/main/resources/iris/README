@@ -1,0 +1,8 @@
+The iris dataset is from UCI repository (http://archive.ics.uci.edu/ml/datasets.html). To test Evaluate choose:
+
+Dataset: iris-datset.txt
+Partitions to be evaluated: select one or more files in partitions/
+True Partition: iris-truePartition.txt
+
+
+Result file with the indices calculated: reportIndices.txt
