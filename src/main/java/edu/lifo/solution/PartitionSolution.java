@@ -1,5 +1,9 @@
 package edu.lifo.solution;
 
+import edu.lifo.migrated.PatternDescription;
+import edu.lifo.migrated.Patterns;
+
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.uma.jmetal.solution.Solution;
-
-import edu.lifo.migrated.Patterns;
 
 public class PartitionSolution implements Solution<Cluster> {
 
@@ -167,5 +169,17 @@ public class PartitionSolution implements Solution<Cluster> {
 	}
 	
 	
+    public void writeToFile(String filename) {
+
+        try (FileWriter fileWriter = new FileWriter(filename)) {
+            for (PatternDescription p : patterns.getPatternsDescription()) {
+                int cluster = clusterOf(p.getPatternNumber());
+                fileWriter.write(p.getPatternLabel() + " " + cluster);
+                fileWriter.write(System.lineSeparator());
+            }
+        } catch (Exception e) {
+            System.err.println("Error while writing output file: " + filename);
+        }
+    }
 
 }

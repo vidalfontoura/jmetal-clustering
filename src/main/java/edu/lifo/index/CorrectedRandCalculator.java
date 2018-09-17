@@ -1,5 +1,8 @@
 package edu.lifo.index;
 
+import edu.lifo.migrated.PatternDescription;
+import edu.lifo.solution.PartitionSolution;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,9 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-
-import edu.lifo.migrated.PatternDescription;
-import edu.lifo.solution.PartitionSolution;
 
 public class CorrectedRandCalculator {
 
@@ -39,7 +39,7 @@ public class CorrectedRandCalculator {
 			
 		}
 		partition.deleteCharAt(partition.length()-1).append(")");
-		truePartition.deleteCharAt(partition.length()-1).append(")");
+        truePartition.deleteCharAt(truePartition.length() - 1).append(")");
 		
 		scriptBuilder.append(partition.toString()+"\n");
 		scriptBuilder.append(truePartition.toString()+"\n");
@@ -55,9 +55,9 @@ public class CorrectedRandCalculator {
 		}
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(
-		        System.getProperty("os.name").contains("win") || System.getProperty("os.name").contains("Win") ? "R.exe" : "R",
-		    "--slave",
-		    "-f", scriptFile.getAbsolutePath());
+System.getProperty("os.name").contains("win") || System.getProperty("os.name").contains("Win") ? "R.exe"
+                : "/Library/Frameworks/R.framework/Versions/3.2/Resources/Rscript",
+ "--slave", scriptFile.getAbsolutePath());
 		processBuilder.redirectOutput(outputFile);
 		
 		Process process = processBuilder.start();

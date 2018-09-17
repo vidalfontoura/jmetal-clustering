@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.util.Pair;
@@ -70,7 +69,8 @@ public class Patterns {
        	try (BufferedReader br = Files.newBufferedReader(Paths.get(dataset))) {
        		String line = null;
     		while ((line = br.readLine()) != null) {
-    			 if (line.startsWith("ID")) continue;
+                if (line.startsWith("ID") || line.startsWith("sample"))
+                    continue;
     			 String[] split = line.split("\\s");
                  List<Double> coordinates = Lists.newArrayList();
                  for (int i = 1; i < split.length; i++) {

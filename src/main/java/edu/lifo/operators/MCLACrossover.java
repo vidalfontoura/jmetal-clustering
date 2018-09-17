@@ -400,9 +400,14 @@ public class MCLACrossover implements CrossoverOperator<PartitionSolution> {
       
       PartitionSolution partitionSolution = new PartitionSolution(clusters, patterns);
       
+
 //      partitionSolution.printPartition();
       List<PartitionSolution> newArrayList = Lists.newArrayList();  
       newArrayList.add(partitionSolution);
+
+        graphDirFile.delete();
+        new File(resultName).delete();
+
       return newArrayList;
       
       

@@ -1,6 +1,5 @@
 package edu.lifo.operators;
 
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -28,44 +27,45 @@ import java.util.Set;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolution> {
+public class MCLAMultiParentCrossover implements
+    CrossoverOperator<PartitionSolution> {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final String GRAPH_DIR = "graphDir";
-    
+
     private double crossoverProbability;
-    
+
     private Patterns patterns;
-    
+
     private int minK, maxK;
 
-    public MultiParentMCLACrossover(double crossoverProbability, Patterns patterns, int minK, int maxK) {
-		this.crossoverProbability = crossoverProbability;
-		this.patterns = patterns;
+    public MCLAMultiParentCrossover(double crossoverProbability,
+        Patterns patterns, int minK, int maxK) {
+
+        this.crossoverProbability = crossoverProbability;
+        this.patterns = patterns;
         this.minK = minK;
         this.maxK = maxK;
-	}
+    }
 
-	@Override
-	public List<PartitionSolution> execute(List<PartitionSolution> source) {
-		ClusteringTypes.passo++;
-		
-		File graphDirFile = new File(GRAPH_DIR);
-		if (!graphDirFile.exists()) {
-			graphDirFile.mkdir();
-		}
-		
-		String graphPath = GRAPH_DIR + File.separator + new Date().getTime();
+    @Override
+    public List<PartitionSolution> execute(List<PartitionSolution> source) {
 
+        ClusteringTypes.passo++;
 
-        int nVertices = 0;
-        int nEdges =  0;
-        for(int i=0; i<source.size(); i++) {
-            nVertices += source.get(i).getNumberOfClusters();
+        File graphDirFile = new File(GRAPH_DIR);
+        if (!graphDirFile.exists()) {
+            graphDirFile.mkdir();
         }
 
-        
+        String graphPath = GRAPH_DIR + File.separator + new Date().getTime();
+
+        int nVertices = 0;
+        int nEdges = 0;
+        for (int i = 0; i < source.size(); i++) {
+            nVertices += source.get(i).getNumberOfClusters();
+        }
 
         Map<Integer, Map<Integer, Integer>> h = Maps.newTreeMap(); // int ->
                                                                    // indice do
@@ -79,8 +79,6 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
                                                                    // pertence
                                                                    // ao cluster
                                                                    // hi
-        
-        long tempoInicio = System.currentTimeMillis();
 
         int numberOfHyperClusters = 1;
 
@@ -93,7 +91,8 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
                 Cluster cluster = clusters.get(clusterI);
 
                 for (PatternDescription pat : patterns.getPatternsDescription()) {
-                    if (cluster.getListPatternNumber().contains(pat.getPatternNumber())) {
+                    if (cluster.getListPatternNumber().contains(
+                        pat.getPatternNumber())) {
                         map.put(pat.getPatternNumber(), 1);
                     } else {
                         map.put(pat.getPatternNumber(), 0);
@@ -106,25 +105,25 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
         }
 
         // Print the hypergraph
-        System.out.print("object\t");
-        for (int i = 1; i < h.size() + 1; i++)
-            System.out.print("h " + i + "\t");
-        System.out.println();
-        for (PatternDescription patternDescription : patterns.getPatternsDescription()) {
-            System.out.print(patternDescription.getPatternNumber() + "\t");
-            for (int i = 1; i < h.size() + 1; i++)
-                System.out.print(h.get(i).get(patternDescription.getPatternNumber()) + "\t");
-            System.out.println();
-        }
+        // System.out.print("object\t");
+        // for (int i = 1; i < h.size() + 1; i++)
+        // System.out.print("h " + i + "\t");
+        // System.out.println();
+        // for (PatternDescription patternDescription :
+        // patterns.getPatternsDescription()) {
+        // System.out.print(patternDescription.getPatternNumber() + "\t");
+        // for (int i = 1; i < h.size() + 1; i++)
+        // System.out.print(h.get(i).get(patternDescription.getPatternNumber())
+        // + "\t");
+        // System.out.println();
+        // }
 
-        System.out.println("Tempo Total: " + (System.currentTimeMillis() - tempoInicio));
-        
-        
         Map<Integer, Map<Integer, Double>> w = Maps.newHashMap(); // pesos
-                                                                    // das
-                                                                    // arestas
-        
-        double[][] pesos = new double[numberOfHyperClusters][numberOfHyperClusters];
+                                                                  // das
+                                                                  // arestas
+
+        double[][] sizes =
+            new double[numberOfHyperClusters][numberOfHyperClusters];
 
         nEdges = 0;
         for (int i = 1; i <= h.size(); i++) {
@@ -132,12 +131,14 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
 
                 double union = 0;
                 double intersec = 0;
-                double peso = 0;
-                for (PatternDescription patternDescription : patterns.getPatternsDescription()) {
+                double size = 0;
+                for (PatternDescription patternDescription : patterns
+                    .getPatternsDescription()) {
                     int patternNumber = patternDescription.getPatternNumber();
                     if (i == j)
                         continue;
-                    if (h.get(i).get(patternNumber) == 1 && h.get(j).get(patternNumber) == 1) {
+                    if (h.get(i).get(patternNumber) == 1
+                        && h.get(j).get(patternNumber) == 1) {
                         intersec++;
                     }
                     if (h.get(i).get(patternNumber) == 1) {
@@ -148,8 +149,8 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
                     }
                 }
                 if (union > 0) {
-                    peso = intersec / union;
-                    pesos[i][j] = peso;
+                    size = intersec / union;
+                    sizes[i][j] = size;
                     if (w.get(i) == null) {
                         Map<Integer, Double> map = Maps.newTreeMap();
                         map.put(j, (double) intersec / union);
@@ -171,19 +172,11 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
             }
         }
         nEdges = nEdges / 2;
-        
-        Set<Integer> keySet = w.keySet();
-        for (Integer key : keySet) {
-            System.out.println(key);
-            Map<Integer, Double> map = w.get(key);
-            Set<Integer> keySet2 = map.keySet();
-            for (Integer key2 : keySet2) {
-                System.out.print(" " + key2 + "->" + map.get(key2));
-            }
-            System.out.println();
-        }
-        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(graphPath));) {
-        
+
+        try (
+            BufferedWriter fileWriter =
+                new BufferedWriter(new FileWriter(graphPath));) {
+
             fileWriter.write(nVertices + "\t" + nEdges + "\t1" + "\n");
             for (int i = 1; i <= h.size(); i++) {
                 Map<Integer, Double> edges = w.get(i);
@@ -194,16 +187,16 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
                         int w_int = (int) Math.ceil(weight * 10000);
                         fileWriter.write(key + "\t" + w_int + "\t");
                     }
-                    }
+                }
                 fileWriter.write("\n");
 
-                }
+            }
 
-    } catch (IOException e) {
-        e.printStackTrace();
-        System.out.println("Problem writing graphFile");
-        System.exit(-1);
-    }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Problem writing graphFile");
+            System.exit(-1);
+        }
 
         int nClustersChild = JMetalRandom.getInstance().nextInt(minK, maxK);
         File file = new File(graphPath);
@@ -264,22 +257,29 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
                 if (association.get(mcIt.getKey()) == null) {
                     association.put(mcIt.getKey(), Maps.newTreeMap());
                 }
-                association.get(mcIt.getKey()).put(patternsIt.getPatternNumber(), 0.0);
+                association.get(mcIt.getKey()).put(
+                    patternsIt.getPatternNumber(), 0.0);
 
                 for (Integer iH : mcIt.getValue()) {
 
-                    Double assoValue = association.get(mcIt.getKey()).get(patternsIt.getPatternNumber());
+                    Double assoValue =
+                        association.get(mcIt.getKey()).get(
+                            patternsIt.getPatternNumber());
                     assoValue += h.get(iH).get(patternsIt.getPatternNumber());
-                    association.get(mcIt.getKey()).put(patternsIt.getPatternNumber(), assoValue);
+                    association.get(mcIt.getKey()).put(
+                        patternsIt.getPatternNumber(), assoValue);
                 }
                 if (mcIt.getValue().size() != 0) {
-                    Double assoValue = association.get(mcIt.getKey()).get(patternsIt.getPatternNumber());
+                    Double assoValue =
+                        association.get(mcIt.getKey()).get(
+                            patternsIt.getPatternNumber());
                     assoValue /= mcIt.getValue().size();
-                    association.get(mcIt.getKey()).put(patternsIt.getPatternNumber(), assoValue);
+                    association.get(mcIt.getKey()).put(
+                        patternsIt.getPatternNumber(), assoValue);
                 }
             }
         }
-      
+
         Map<Integer, Integer> higherAssociation = Maps.newTreeMap(); // Key ->
         // PatternNumber,
         // Value ->
@@ -304,9 +304,12 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
             // embaixo
             for (Integer mcIt : keySet2) {
 
-                Integer mcAux = higherAssociation.get(patternsIt.getPatternNumber());
-                Double assoLevelInHigherAsso = association.get(mcAux).get(patternsIt.getPatternNumber());
-                Double associationLevelWithMcIt = association.get(mcIt).get(patternsIt.getPatternNumber());
+                Integer mcAux =
+                    higherAssociation.get(patternsIt.getPatternNumber());
+                Double assoLevelInHigherAsso =
+                    association.get(mcAux).get(patternsIt.getPatternNumber());
+                Double associationLevelWithMcIt =
+                    association.get(mcIt).get(patternsIt.getPatternNumber());
                 if (associationLevelWithMcIt > assoLevelInHigherAsso) {
                     higherAssociation.put(patternsIt.getPatternNumber(), mcIt);
                 }
@@ -337,38 +340,48 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
 
         List<Cluster> clusters = Lists.newArrayList();
         for (Integer clusterLabel : offspringAsMap.keySet()) {
-            Cluster cluster = new Cluster(offspringAsMap.get(clusterLabel), clusterLabel, patterns);
+            Cluster cluster =
+                new Cluster(offspringAsMap.get(clusterLabel), clusterLabel,
+                    patterns);
             clusters.add(cluster);
         }
 
-        PartitionSolution partitionSolution = new PartitionSolution(clusters, patterns);
-
-        // partitionSolution.printPartition();
+        PartitionSolution partitionSolution =
+            new PartitionSolution(clusters, patterns);
         List<PartitionSolution> newArrayList = Lists.newArrayList();
         newArrayList.add(partitionSolution);
-        System.out.println("Child");
-        partitionSolution.printPartition();
-        return newArrayList;
-      
-	}
 
-	@Override
-	public int getNumberOfParents() {
-		return 2;
-	}
+        graphDirFile.delete();
+        new File(resultName).delete();
+
+        return newArrayList;
+
+    }
+
+    @Override
+    public int getNumberOfParents() {
+
+        return 2;
+    }
 
     public static void main(String[] args) {
 
-        String datasetPath = "/Users/vfontoura/MOCLE/iris-test/iris-dataset.txt";
-        String filePatternsPath = "/Users/vfontoura/MOCLE/iris-test/true partition/iris-truePartition.txt";
-        String initialPartitionPath = "/Users/vfontoura/MOCLE/iris-test/partitions";
+        String datasetPath =
+            "/Users/vfontoura/MOCLE/iris-test/iris-dataset.txt";
+        String filePatternsPath =
+            "/Users/vfontoura/MOCLE/iris-test/true partition/iris-truePartition.txt";
+        String initialPartitionPath =
+            "/Users/vfontoura/MOCLE/iris-test/partitions";
 
         Patterns patterns = new Patterns(datasetPath, filePatternsPath);
 
-        MultiParentMCLACrossover mclaCrossover = new MultiParentMCLACrossover(1.0, patterns, 3, 4);
+        MCLAMultiParentCrossover mclaCrossover =
+            new MCLAMultiParentCrossover(1.0, patterns, 3, 4);
 
-        List<Map<Integer, List<String>>> readInitialPartitions = DatasetReader.readInitialPartitions(initialPartitionPath);
-        Iterator<Map<Integer, List<String>>> iterator = readInitialPartitions.iterator();
+        List<Map<Integer, List<String>>> readInitialPartitions =
+            DatasetReader.readInitialPartitions(initialPartitionPath);
+        Iterator<Map<Integer, List<String>>> iterator =
+            readInitialPartitions.iterator();
         List<PartitionSolution> solutions = Lists.newArrayList();
         while (iterator.hasNext()) {
             Map<Integer, List<String>> next = iterator.next();
@@ -378,20 +391,21 @@ public class MultiParentMCLACrossover implements CrossoverOperator<PartitionSolu
                 List<String> patternLabels = next.get(clusterId);
                 List<Integer> patternNumbers = Lists.newArrayList();
                 for (String patternLabel : patternLabels) {
-                    int patternNumberByPatternLabel = patterns.getPatternNumberByPatternLabel(patternLabel);
+                    int patternNumberByPatternLabel =
+                        patterns.getPatternNumberByPatternLabel(patternLabel);
                     patternNumbers.add(patternNumberByPatternLabel);
                 }
-                Cluster cluster = new Cluster(patternNumbers, clusterId, patterns);
+                Cluster cluster =
+                    new Cluster(patternNumbers, clusterId, patterns);
                 clusterList.add(cluster);
             }
-            PartitionSolution partitionSolution = new PartitionSolution(clusterList, patterns);
+            PartitionSolution partitionSolution =
+                new PartitionSolution(clusterList, patterns);
             solutions.add(partitionSolution);
         }
         System.out.println(solutions.size());
         mclaCrossover.execute(solutions);
 
     }
-
-
 
 }
